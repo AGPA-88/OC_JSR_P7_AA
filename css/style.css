@@ -1,0 +1,17 @@
+#ingredient{
+    background-color: blue;
+}
+#device{
+    background-color: green;
+}
+#ustensil{
+    background-color: red;
+}
+
+#button_container{
+    display: flex;
+}
+.search_buttons{
+    border-radius: 10px;
+    border: none;
+}
