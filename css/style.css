@@ -1,6 +1,59 @@
+#page-logo{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 25px;
+}
+/* TOP SEARCH BOX SECTION*/
+#search{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 25px;
+    
+}
+#search ::placeholder{
+    color: grey;
+}
+#search i{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: -25px;
+}
+
+#search-box{
+    background-color: lightgrey;
+    border-radius: 5px;
+    height: 50px;
+}
+
+/* CARD SECTION */
+.card{
+    max-width: 400px;
+    /* height: 400px; */
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+.card-body{
+    background-color: whitesmoke;
+}
+.card img{
+    height: 200px;
+    background-color: grey;
+}
+.card-title{
+    font-size: medium;
+    font-weight: bold;
+}
+
+
+
 #ingredient{
     background-color: blue;
+    
 }
+
 #device{
     background-color: green;
 }
@@ -10,8 +63,73 @@
 
 #button_container{
     display: flex;
+    padding: 15px;
 }
 .search_buttons{
     border-radius: 10px;
     border: none;
+    min-height: 60px;
+    width: 150px;
+    margin: 10px;
+}
+::placeholder{
+    color: white;
+}
+input{
+    color: white;
+}
+.title_section{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;    
+}
+.description_section{
+    display: grid;
+    grid-template-columns: auto auto;
+    height: 200px;
+    overflow: hidden;
+    /* text-overflow: clip ellipsis!important; */
+}
+.time_container{
+    display: flex;
+    justify-content: end;
+    font-weight: bold;
+}
+.time_container i{
+    padding-right: 5px;
+    font-size: larger;
+}
+
+
+.select2 {
+    background-color: blue;
+    color: #fff;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.select2 input, .select2 .items-list {
+    display: none;
+}
+
+.select2 .items-list {
+    list-style: none;
+    flex-wrap: wrap;
+    margin: 0;
+    padding:0;
+}
+
+.select2 .items-list li {
+    width: 33.33%;
+}
+
+.select2 .items-list li button {
+    background-color: transparent;
+    color: #fff;
+    border: 0;
+    cursor: pointer;
+}
+
+.select2.open input, .select2.open .items-list {
+    display: flex;
 }
