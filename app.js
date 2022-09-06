@@ -23,6 +23,13 @@ const getIngredients = (recipes) => {
   return ingredients;
 };
 
+const getDevices = (recipes) => {
+  let devices = [];
+  devices.push(recipes.appliance);
+
+  return devices;
+};
+
 (async () => {
   const data = await getRecipes();
   let recipes = data;
@@ -42,12 +49,6 @@ const getIngredients = (recipes) => {
     { once: true }
   );
 
-  const getDevices = (recipes) => {
-    let devices = [];
-    devices.push(recipes.appliance);
-
-    return devices;
-  };
   const devices = getDevices(data);
 
   devicesSelect.addEventListener(
@@ -57,8 +58,9 @@ const getIngredients = (recipes) => {
       e.path[1].classList.add("open");
 
       devices.map((i) => {
-        e.target.parentNode.childNodes[5].innerHTML += `<li><button>${i}</button></li>`;
+        e.target.parentNode.childNodes[6].innerHTML += `<li><button>${i}</button></li>`;
       });
+      console.log(devices);
     },
     { once: true }
   );
