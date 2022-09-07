@@ -6,104 +6,149 @@ const devicesSelect = document.querySelector("#devices-select");
 const ustensilsSelect = document.querySelector("#ustensils-select");
 
 const getRecipes = async () => {
-  let res = await fetch("/data.json");
-  return await res.json();
+    let res = await fetch("/data.json");
+    return await res.json();
 };
 
 const getIngredients = (recipes) => {
-  let ingredients = [];
-  recipes.forEach((recipe) => {
-    recipe.ingredients.forEach((ingredient) => {
-      if (!ingredients.includes(ingredient.ingredient)) {
-        ingredients.push(ingredient.ingredient);
-      }
+    let ingredients = [];
+    recipes.forEach((recipe) => {
+        recipe.ingredients.forEach((ingredient) => {
+            if (!ingredients.includes(ingredient.ingredient.toLowerCase()) 
+            && 
+            ingredient.ingredient.toLowerCase().includes(document.querySelector("#ingredients-search").value.toLowerCase())) {
+                ingredients.push(ingredient.ingredient.toLowerCase());
+            }
+        });
     });
-  });
 
-  return ingredients;
+    return ingredients;
 };
 
 const getDevices = (recipes) => {
-  let devices = [];
-  devices.push(recipes.appliance);
+    let devices = [];
+    recipes.forEach((recipes) => {
+        if (!devices.includes(recipes.appliance.toLowerCase())
+        &&
+        recipes.appliance.toLowerCase().includes(document.querySelector("#devices-search").value.toLowerCase())) {
+            devices.push(recipes.appliance.toLowerCase());
+        }
+    });
 
-  return devices;
+    return devices;
+};
+
+const getUstensils = (recipes) => {
+    let ustensils = [];
+    recipes.forEach((recipe) => {
+        recipe.ustensils.forEach((ustensil) => {
+            if (!ustensils.includes(ustensil.toLowerCase())
+            &&
+            ustensil.toLowerCase().includes(document.querySelector("#ustensils-search").value.toLowerCase())) {
+                ustensils.push(ustensil.toLowerCase());
+            }
+        });
+    });
+
+    return ustensils;
 };
 
 (async () => {
-  const data = await getRecipes();
-  let recipes = data;
+    const data = await getRecipes();
+    let recipes = data;
 
-  const ingredients = getIngredients(data);
+    // INGREDIENTES
+    const filterIngredients = (e) => {
+        console.log({ e });
 
-  ingredientsSelect.addEventListener(
-    "click",
-    (e) => {
-      console.log({ e });
-      e.path[1].classList.add("open");
+        const ingredients = getIngredients(recipes);
+        document.querySelector("#ingredients-list").innerHTML = "";
+        document.querySelector("#ingredients-select").classList.add("open");
 
-      ingredients.map((i) => {
-        e.target.parentNode.childNodes[5].innerHTML += `<li><button>${i}</button></li>`;
-      });
-    },
-    { once: true }
-  );
+        ingredients.map((i) => {
+            document.querySelector("#ingredients-list").innerHTML += `<li><button>${i}</button></li>`;
+        });
+    };
+    
+    ingredientsSelect.addEventListener(
+        "click",
+        filterIngredients,
+        { once: true }
+    );
+    document.querySelector("#ingredients-search").addEventListener(
+        "keyup",
+        filterIngredients
+    );
 
-  const devices = getDevices(data);
 
-  devicesSelect.addEventListener(
-    "click",
-    (e) => {
-      console.log({ e });
-      e.path[1].classList.add("open");
+    // DEVICES
+    const filterDevices = (e) => {
+        console.log({ e });
 
-      devices.map((i) => {
-        e.target.parentNode.childNodes[6].innerHTML += `<li><button>${i}</button></li>`;
-      });
-      console.log(devices);
-    },
-    { once: true }
-  );
+        const devices = getDevices(recipes);
+        document.querySelector("#devices-list").innerHTML = "";
+        document.querySelector("#devices-select").classList.add("open");
 
-  // let devices = [];
-  // let ustensils = [];
+        devices.map((i) => {
+            document.querySelector("#devices-list").innerHTML += `<li><button>${i}</button></li>`;
+        });
+    };
 
-  // console.log({ ingredients });
-  // console.log({ ustensils });
-  // console.log({ devices });
-  // const devicesInput = document.querySelector("#devices");
-  // const ustensilsInput = document.querySelector("#ustensils");
+    devicesSelect.addEventListener(
+        "click",
+        filterDevices,
+        { once: true }
+    );
 
-  // ingredients.map(
-  //   (i) => (ingredientsInput.innerHTML += `<option value="${i}">${i}</option>`)
-  // );
-  // ustensils.map(
-  //   (i) => (ustensilsInput.innerHTML += `<option value="${i}">${i}</option>`)
-  // );
-  // devices.map(
-  //   (i) => (devicesInput.innerHTML += `<option value="${i}">${i}</option>`)
-  // );
+    document.querySelector("#devices-search").addEventListener(
+        "keyup",
+        filterDevices
+    );
 
-  const renderRecipes = (data) => {
-    recipesNode.innerHTML = "";
+    // UTENSILS
+    const filterUstensils = (e) => {
+        console.log({ e });
 
-    data.map((recipe) => {
-      let ingredientsHtml = "";
-      recipe.ingredients.forEach((ingredient) => {
-        ingredientsHtml += `<p class="card-text">${ingredient.ingredient} ${
-          ingredient.quantity ? ": " + ingredient.quantity : ""
-        }</p>`;
-      });
+        const ustensils = getUstensils(recipes);
+        document.querySelector("#ustensils-list").innerHTML = "";
+        document.querySelector("#ustensils-select").classList.add("open");
 
-      let description = "";
-      const sizeLimit = 200;
-      if (recipe.description.length > sizeLimit) {
-        description = recipe.description.substring(0, sizeLimit - 5) + "(...)";
-      } else {
-        description = recipe.description;
-      }
+        ustensils.map((i) => {
+            document.querySelector("#ustensils-list").innerHTML += `<li><button>${i}</button></li>`;
+        });
+    };
+    ustensilsSelect.addEventListener(
+        "click",
+        filterUstensils,
+        { once: true }
+    );
 
-      recipesNode.innerHTML += `
+    document.querySelector("#ustensils-search").addEventListener(
+        "keyup",
+        filterUstensils
+    );
+
+    // RENDER RECIPES
+    const renderRecipes = (data) => {
+        recipesNode.innerHTML = "";
+
+        data.map((recipe) => {
+            let ingredientsHtml = "";
+            recipe.ingredients.forEach((ingredient) => {
+                ingredientsHtml += `<p class="card-text">${ingredient.ingredient} ${
+                    ingredient.quantity ? ": " + ingredient.quantity : ""
+                }</p>`;
+            });
+
+            let description = "";
+            const sizeLimit = 200;
+            if (recipe.description.length > sizeLimit) {
+                description = recipe.description.substring(0, sizeLimit - 5) + "(...)";
+            } else {
+                description = recipe.description;
+            }
+
+            recipesNode.innerHTML += `
                     <div class="col-md-4 mb-3">
                         <div class="card">
                             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM8vm/ffwAH2wNEx3f/kwAAAABJRU5ErkJggg==" class="card-img-top" alt="...">
@@ -128,21 +173,29 @@ const getDevices = (recipes) => {
                           </div>
                     </div>
                 `;
+        });
+    };
+
+    renderRecipes(recipes);
+
+    searchInput.addEventListener("keyup", (e) => {
+        if (e.keyCode === 13) {e.preventDefault();
+            e.stopPropagation();
+        }
+        const input = e.target.value.toLocaleLowerCase();
+        console.log(input.length);
+
+        if (input.length > 2){
+            recipes = recipes.filter((recipe) => {
+                console.log({ name: recipe.name, input });
+                return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
+            });
+  
+        }else{
+            recipes = data;
+        }
+        console.log({ recipes });
+        renderRecipes(recipes);
+          
     });
-  };
-
-  renderRecipes(recipes);
-
-  searchInput.addEventListener("change", (e) => {
-    const input = e.target.value.toLocaleLowerCase();
-
-    data = recipes.filter((r) => {
-      console.log({ name: r.name, input });
-      return r.name.toLocaleLowerCase().includes(input);
-    });
-
-    console.log({ data });
-
-    renderRecipes(data);
-  });
 })();
