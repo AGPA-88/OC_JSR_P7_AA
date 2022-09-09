@@ -4,7 +4,10 @@
     width: 100%;
     padding: 25px;
 }
+
+
 /* TOP SEARCH BOX SECTION*/
+
 #search{
     display: flex;
     justify-content: center;
@@ -28,6 +31,55 @@
     height: 50px;
 }
 
+
+/* BUTTONS SECTION */
+
+/* #button_container i {
+    display: flex;
+    justify-content: space-between;
+} */
+
+#ingredients-select{
+    background-color: #3282F7;
+    /* width: 150px; */
+    margin: 5px;
+    margin-left: 0;
+    padding: 10px;
+}
+
+#devices-select{
+    background-color: #68D9A4;
+    /* width: 150px; */
+    margin: 5px;
+    padding: 10px;
+}
+#ustensils-select{
+    background-color: #ED6454;
+    /* width: 150px; */
+    margin: 5px;
+    padding: 10px;
+}
+
+#button_container{
+    display: flex;
+    padding: 15px;
+}
+.search_buttons{
+    border-radius: 10px;
+    border: none;
+    min-height: 60px;
+    width: 150px;
+    margin: 10px;
+}
+::placeholder{
+    color: grey;
+    background-color: transparent;
+}
+input{
+    color: black;
+}
+
+
 /* CARD SECTION */
 .card{
     max-width: 400px;
@@ -47,37 +99,6 @@
     font-weight: bold;
 }
 
-
-
-#ingredient{
-    background-color: blue;
-    
-}
-
-#device{
-    background-color: green;
-}
-#ustensil{
-    background-color: red;
-}
-
-#button_container{
-    display: flex;
-    padding: 15px;
-}
-.search_buttons{
-    border-radius: 10px;
-    border: none;
-    min-height: 60px;
-    width: 150px;
-    margin: 10px;
-}
-::placeholder{
-    color: white;
-}
-input{
-    color: black;
-}
 .title_section{
     display: flex;
     justify-content: space-between;
@@ -100,9 +121,10 @@ input{
     font-size: larger;
 }
 
+/* SELECT2 */
 
 .select2 {
-    background-color: blue;
+    /* background-color: blue; */
     color: #fff;
     border-radius: 4px;
     padding: 5px;
