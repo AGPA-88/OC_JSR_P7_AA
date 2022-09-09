@@ -56,6 +56,40 @@ const getUstensils = (recipes) => {
 (async () => {
     const data = await getRecipes();
     let recipes = data;
+    let filters = {
+        ingredients: ["Coconut Milk", "Tomato"],
+        
+    };
+
+    
+    const selectedFilters = document.querySelector('#selected-filters');
+
+    const xs = (filters) => {
+        selectedFilters.innerHTML="";
+
+        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div class="ingredient">${ing} <button class="remove-filter" data-value="${ing}">x</button></div>`);
+
+        document.querySelectorAll('.remove-filter')?.forEach(elm => {
+            elm.addEventListener('click', e => {
+                e.preventDefault();
+    
+                const newFilter = filters.ingredients.filter(ing => {
+                    console.log({ing, value: e.target.dataset.value});
+                    return ing !== e.target.dataset.value;
+                });
+    
+                filters.ingredients = newFilter;
+                xs(filters);
+    
+    
+                console.dir(e.target);
+            });
+        });
+    };
+
+    xs(filters);
+
+ 
 
     // INGREDIENTES
     const filterIngredients = (e) => {
@@ -65,9 +99,21 @@ const getUstensils = (recipes) => {
         document.querySelector("#ingredients-list").innerHTML = "";
         document.querySelector("#ingredients-select").classList.add("open");
 
+
+
         ingredients.map((i) => {
-            document.querySelector("#ingredients-list").innerHTML += `<li><button>${i}</button></li>`;
+            document.querySelector("#ingredients-list").innerHTML += `<li><button class="select-ingredient">${i}</button></li>`;
         });
+
+        document.querySelectorAll('.select-ingredient')?.forEach(btn => btn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            filters.ingredients = [...filters.ingredients, e.target.innerText];
+            xs(filters);
+            document.querySelector("#ingredients-select").classList.remove("open");
+
+    
+        }));
     };
     
     ingredientsSelect.addEventListener(
@@ -183,18 +229,17 @@ const getUstensils = (recipes) => {
             e.stopPropagation();
         }
         const input = e.target.value.toLocaleLowerCase();
-        console.log(input.length);
 
         if (input.length > 2){
             recipes = recipes.filter((recipe) => {
-                console.log({ name: recipe.name, input });
+                // console.log({ name: recipe.name, input });
                 return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
             });
   
         }else{
             recipes = data;
         }
-        console.log({ recipes });
+        // console.log({ recipes });
         renderRecipes(recipes);
           
     });
