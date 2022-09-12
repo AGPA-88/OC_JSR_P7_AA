@@ -57,14 +57,14 @@ const getUstensils = (recipes) => {
     const data = await getRecipes();
     let recipes = data;
     let filters = {
-        ingredients: ["Coconut Milk", "Tomato"],
+        ingredients: [],
         
     };
 
     
     const selectedFilters = document.querySelector('#selected-filters');
 
-    const xs = (filters) => {
+    const displayEnabledIngredients = (filters) => {
         selectedFilters.innerHTML="";
 
         filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div class="ingredient">${ing} <button class="remove-filter" data-value="${ing}">x</button></div>`);
@@ -79,7 +79,8 @@ const getUstensils = (recipes) => {
                 });
     
                 filters.ingredients = newFilter;
-                xs(filters);
+                displayEnabledIngredients(filters);
+                filterRecipes(e);
     
     
                 console.dir(e.target);
@@ -87,7 +88,7 @@ const getUstensils = (recipes) => {
         });
     };
 
-    xs(filters);
+    displayEnabledIngredients(filters);
 
  
 
@@ -108,14 +109,22 @@ const getUstensils = (recipes) => {
         document.querySelectorAll('.select-ingredient')?.forEach(btn => btn.addEventListener('click', (e) => {
             e.preventDefault();
 
+            console.log(e.target.innerText);
             filters.ingredients = [...filters.ingredients, e.target.innerText];
-            xs(filters);
-            document.querySelector("#ingredients-select").classList.remove("open");
-
+            displayEnabledIngredients(filters);
+            // document.querySelector("#ingredients-select").classList.remove("open");
+            filterIngredientsAndRecipes(e);
     
         }));
     };
     
+    const filterIngredientsAndRecipes = (e) => {
+        console.log('tata');
+        filterIngredients(e);
+        filterRecipes(e);
+        console.log('toto');
+    };
+
     ingredientsSelect.addEventListener(
         "click",
         filterIngredients,
@@ -224,23 +233,37 @@ const getUstensils = (recipes) => {
 
     renderRecipes(recipes);
 
-    searchInput.addEventListener("keyup", (e) => {
+    const filterRecipes = (e) => {
         if (e.keyCode === 13) {e.preventDefault();
             e.stopPropagation();
         }
-        const input = e.target.value.toLocaleLowerCase();
+        const input = document.querySelector("#search-box").value.toLocaleLowerCase();
 
         if (input.length > 2){
+            console.log(filters);
             recipes = recipes.filter((recipe) => {
-                // console.log({ name: recipe.name, input });
                 return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
             });
   
         }else{
             recipes = data;
         }
-        // console.log({ recipes });
+        console.log(filters.ingredients);
+
+        if (filters.ingredients.length > 0) {
+            console.log("Ingrdient filtering");
+            let filteredRecipes = recipes;
+            filters.ingredients.forEach(ingredient => {
+                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ingredients).toLocaleLowerCase().includes(ingredient))];
+            });
+            recipes = filteredRecipes;
+        }
+        console.log({ recipes });
         renderRecipes(recipes);
+
+        if (recipes.length === 0) recipesNode.innerHTML = 'No recipe matches your criteria... <br> You can search for "apple pie", "fish", etc...'; 
           
-    });
+    };
+
+    searchInput.addEventListener("keyup", filterRecipes);
 })();
