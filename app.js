@@ -64,171 +64,18 @@ const getUstensils = (recipes) => {
 
 
 (async () => {
+
+    //Initialization
     const data = await getRecipes();
     let recipes = data;
     let filters = {
         ingredients: [],
-        
     };
 
-    // FILTER RECIPES
-
-    const filterRecipes = (e) => {
-        if (e.keyCode === 13) {e.preventDefault();
-            e.stopPropagation();
-        }
-        const input = document.querySelector("#search-box").value.toLocaleLowerCase();
-
-        if (input.length > 2){
-            console.log(filters);
-            recipes = recipes.filter((recipe) => {
-                return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
-            });
-  
-        }else{
-            recipes = data;
-        }
-        console.log(filters.ingredients);
-
-        if (filters.ingredients.length > 0) {
-            console.log("Ingrdient filtering");
-            let filteredRecipes = recipes;
-            filters.ingredients.forEach(ingredient => {
-                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ingredients).toLocaleLowerCase().includes(ingredient))];
-            });
-            recipes = filteredRecipes;
-        }
-        console.log({ recipes });
-        renderRecipes(recipes);
-
-        if (recipes.length === 0) recipesNode.innerHTML = 'No recipe matches your criteria... <br> You can search for "apple pie", "fish", etc...'; 
-          
-    };
-
-    searchInput.addEventListener("keyup", filterRecipes);
-
-    
+    //HTML Elements
     const selectedFilters = document.querySelector('#selected-filters');
 
-    const displayEnabledIngredients = (filters) => {
-        selectedFilters.innerHTML="";
-
-        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div class="ingredient">${ing} <button class="remove-filter" data-value="${ing}">x</button></div>`);
-
-        document.querySelectorAll('.remove-filter')?.forEach(elm => {
-            elm.addEventListener('click', e => {
-                e.preventDefault();
-    
-                const newFilter = filters.ingredients.filter(ing => {
-                    console.log({ing, value: e.target.dataset.value});
-                    return ing !== e.target.dataset.value;
-                });
-    
-                filters.ingredients = newFilter;
-                displayEnabledIngredients(filters);
-                filterRecipes(e);
-    
-    
-                console.dir(e.target);
-            });
-        });
-    };
-
-    displayEnabledIngredients(filters);
-
- 
-
-    // INGREDIENTES
-    const filterIngredients = (e) => {
-        console.log({ e });
-
-        const ingredients = getIngredients(recipes);
-        document.querySelector("#ingredients-list").innerHTML = "";
-        document.querySelector("#ingredients-select").classList.add("open");
-
-
-
-        ingredients.map((i) => {
-            document.querySelector("#ingredients-list").innerHTML += `<li><button class="select-ingredient">${i}</button></li>`;
-        });
-
-        document.querySelectorAll('.select-ingredient')?.forEach(btn => btn.addEventListener('click', (e) => {
-            e.preventDefault();
-
-            console.log(e.target.innerText);
-            filters.ingredients = [...filters.ingredients, e.target.innerText];
-            displayEnabledIngredients(filters);
-            // document.querySelector("#ingredients-select").classList.remove("open");
-            filterIngredientsAndRecipes(e);
-    
-        }));
-    };
-    
-    const filterIngredientsAndRecipes = (e) => {
-        console.log('tata');
-        filterIngredients(e);
-        filterRecipes(e);
-        console.log('toto');
-    };
-
-    ingredientsSelect.addEventListener(
-        "click",
-        filterIngredients,
-        { once: true }
-    );
-    document.querySelector("#ingredients-search").addEventListener(
-        "keyup",
-        filterIngredients
-    );
-
-
-    // DEVICES
-    const filterDevices = (e) => {
-        console.log({ e });
-
-        const devices = getDevices(recipes);
-        document.querySelector("#devices-list").innerHTML = "";
-        document.querySelector("#devices-select").classList.add("open");
-
-        devices.map((i) => {
-            document.querySelector("#devices-list").innerHTML += `<li><button>${i}</button></li>`;
-        });
-    };
-
-    devicesSelect.addEventListener(
-        "click",
-        filterDevices,
-        { once: true }
-    );
-
-    document.querySelector("#devices-search").addEventListener(
-        "keyup",
-        filterDevices
-    );
-
-    // UTENSILS
-    const filterUstensils = (e) => {
-        console.log({ e });
-
-        const ustensils = getUstensils(recipes);
-        document.querySelector("#ustensils-list").innerHTML = "";
-        document.querySelector("#ustensils-select").classList.add("open");
-
-        ustensils.map((i) => {
-            document.querySelector("#ustensils-list").innerHTML += `<li><button>${i}</button></li>`;
-        });
-    };
-    ustensilsSelect.addEventListener(
-        "click",
-        filterUstensils,
-        { once: true }
-    );
-
-    document.querySelector("#ustensils-search").addEventListener(
-        "keyup",
-        filterUstensils
-    );
-
+    // Rendering functions
     // RENDER RECIPES
     const renderRecipes = (data) => {
         recipesNode.innerHTML = "";
@@ -276,6 +123,173 @@ const getUstensils = (recipes) => {
                 `;
         });
     };
+
+    // RENDER INGREDIENTS TAGS
+    const displayEnabledIngredients = (filters) => {
+        selectedFilters.innerHTML="";
+
+        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div class="ingredient">${ing} <button class="remove-filter" data-value="${ing}">x</button></div>`);
+
+        document.querySelectorAll('.remove-filter')?.forEach(elm => {
+            elm.addEventListener('click', e => {
+                e.preventDefault();
+    
+                const newFilter = filters.ingredients.filter(ing => {
+                    console.log({ing, value: e.target.dataset.value});
+                    return ing !== e.target.dataset.value;
+                });
+    
+                filters.ingredients = newFilter;
+                displayEnabledIngredients(filters);
+                filterRecipes(e);
+    
+    
+                console.dir(e.target);
+            });
+        });
+    };
+
+    // Filtering functions
+    // TODO : INSERT AFTER THE FILTER FUNCTIONS DECLARATION
+
+    const filterIngredientsAndRecipes = (e) => {
+        console.log('tata');
+        filterIngredients(e);
+        filterRecipes(e);
+        console.log('toto');
+    };
+
+    // FILTER RECIPES
+    const filterRecipes = (e) => {
+        if (e.keyCode === 13) {e.preventDefault();
+            e.stopPropagation();
+        }
+        const input = document.querySelector("#search-box").value.toLocaleLowerCase();
+    
+        if (input.length > 2){
+            console.log(filters);
+            recipes = recipes.filter((recipe) => {
+                return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
+            });
+      
+        }else{
+            recipes = data;
+        }
+        console.log(filters.ingredients);
+    
+        if (filters.ingredients.length > 0) {
+            console.log("Ingrdient filtering");
+            let filteredRecipes = recipes;
+            filters.ingredients.forEach(ingredient => {
+                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ingredients).toLocaleLowerCase().includes(ingredient))];
+            });
+            recipes = filteredRecipes;
+        }
+        console.log({ recipes });
+        renderRecipes(recipes);
+    
+        if (recipes.length === 0) recipesNode.innerHTML = 'No recipe matches your criteria... <br> You can search for "apple pie", "fish", etc...'; 
+              
+    };
+        
+     
+    // FILTER INGREDIENTES
+    const filterIngredients = (e) => {
+        console.log({ e });
+    
+        const ingredients = getIngredients(recipes);
+        document.querySelector("#ingredients-list").innerHTML = "";
+        document.querySelector("#ingredients-select").classList.add("open");
+    
+    
+    
+        ingredients.map((i) => {
+            document.querySelector("#ingredients-list").innerHTML += `<li><button class="select-ingredient">${i}</button></li>`;
+        });
+    
+        document.querySelectorAll('.select-ingredient')?.forEach(btn => btn.addEventListener('click', (e) => {
+            e.preventDefault();
+    
+            console.log(e.target.innerText);
+            filters.ingredients = [...filters.ingredients, e.target.innerText];
+            displayEnabledIngredients(filters);
+            // document.querySelector("#ingredients-select").classList.remove("open");
+            filterIngredientsAndRecipes(e);
+        
+        }));
+    };
+        
+    
+    // FILTER DEVICES
+    const filterDevices = (e) => {
+        console.log({ e });
+    
+        const devices = getDevices(recipes);
+        document.querySelector("#devices-list").innerHTML = "";
+        document.querySelector("#devices-select").classList.add("open");
+    
+        devices.map((i) => {
+            document.querySelector("#devices-list").innerHTML += `<li><button>${i}</button></li>`;
+        });
+    };
+    
+    
+    // FILTER UTENSILS
+    const filterUstensils = (e) => {
+        console.log({ e });
+    
+        const ustensils = getUstensils(recipes);
+        document.querySelector("#ustensils-list").innerHTML = "";
+        document.querySelector("#ustensils-select").classList.add("open");
+    
+        ustensils.map((i) => {
+            document.querySelector("#ustensils-list").innerHTML += `<li><button>${i}</button></li>`;
+        });
+    };
+
+    // Event adding
+    //TODO : INSERT HERE THE ADDEVENTLISTENER 
+
+    ingredientsSelect.addEventListener(
+        "click",
+        filterIngredients,
+        { once: true }
+    );
+
+    devicesSelect.addEventListener(
+        "click",
+        filterDevices,
+        { once: true }
+    );
+
+    searchInput.addEventListener("keyup", filterRecipes);
+
+    document.querySelector("#ingredients-search").addEventListener(
+        "keyup",
+        filterIngredients
+    );
+
+    document.querySelector("#devices-search").addEventListener(
+        "keyup",
+        filterDevices
+    );
+
+
+    ustensilsSelect.addEventListener(
+        "click",
+        filterUstensils,
+        { once: true }
+    );
+
+    document.querySelector("#ustensils-search").addEventListener(
+        "keyup",
+        filterUstensils
+    );
+
+    // RENDERING 
+    // TODO : INSERT HERE THE RENDER/DISPLAY FUNCTIONS CALL
+    
+    displayEnabledIngredients(filters);
 
     renderRecipes(recipes);
 
