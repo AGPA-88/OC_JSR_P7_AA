@@ -5,10 +5,15 @@ const ingredientsSelect = document.querySelector("#ingredients-select");
 const devicesSelect = document.querySelector("#devices-select");
 const ustensilsSelect = document.querySelector("#ustensils-select");
 
+
+// GET RECIPES
 const getRecipes = async () => {
     let res = await fetch("/data.json");
     return await res.json();
 };
+
+
+// GET INGREDIENTS
 
 const getIngredients = (recipes) => {
     let ingredients = [];
@@ -25,6 +30,8 @@ const getIngredients = (recipes) => {
     return ingredients;
 };
 
+// GET DEVICES
+
 const getDevices = (recipes) => {
     let devices = [];
     recipes.forEach((recipes) => {
@@ -37,6 +44,8 @@ const getDevices = (recipes) => {
 
     return devices;
 };
+
+// GET UTENSILS
 
 const getUstensils = (recipes) => {
     let ustensils = [];
@@ -53,6 +62,7 @@ const getUstensils = (recipes) => {
     return ustensils;
 };
 
+
 (async () => {
     const data = await getRecipes();
     let recipes = data;
@@ -60,6 +70,42 @@ const getUstensils = (recipes) => {
         ingredients: [],
         
     };
+
+    // FILTER RECIPES
+
+    const filterRecipes = (e) => {
+        if (e.keyCode === 13) {e.preventDefault();
+            e.stopPropagation();
+        }
+        const input = document.querySelector("#search-box").value.toLocaleLowerCase();
+
+        if (input.length > 2){
+            console.log(filters);
+            recipes = recipes.filter((recipe) => {
+                return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
+            });
+  
+        }else{
+            recipes = data;
+        }
+        console.log(filters.ingredients);
+
+        if (filters.ingredients.length > 0) {
+            console.log("Ingrdient filtering");
+            let filteredRecipes = recipes;
+            filters.ingredients.forEach(ingredient => {
+                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ingredients).toLocaleLowerCase().includes(ingredient))];
+            });
+            recipes = filteredRecipes;
+        }
+        console.log({ recipes });
+        renderRecipes(recipes);
+
+        if (recipes.length === 0) recipesNode.innerHTML = 'No recipe matches your criteria... <br> You can search for "apple pie", "fish", etc...'; 
+          
+    };
+
+    searchInput.addEventListener("keyup", filterRecipes);
 
     
     const selectedFilters = document.querySelector('#selected-filters');
@@ -233,37 +279,4 @@ const getUstensils = (recipes) => {
 
     renderRecipes(recipes);
 
-    const filterRecipes = (e) => {
-        if (e.keyCode === 13) {e.preventDefault();
-            e.stopPropagation();
-        }
-        const input = document.querySelector("#search-box").value.toLocaleLowerCase();
-
-        if (input.length > 2){
-            console.log(filters);
-            recipes = recipes.filter((recipe) => {
-                return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
-            });
-  
-        }else{
-            recipes = data;
-        }
-        console.log(filters.ingredients);
-
-        if (filters.ingredients.length > 0) {
-            console.log("Ingrdient filtering");
-            let filteredRecipes = recipes;
-            filters.ingredients.forEach(ingredient => {
-                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ingredients).toLocaleLowerCase().includes(ingredient))];
-            });
-            recipes = filteredRecipes;
-        }
-        console.log({ recipes });
-        renderRecipes(recipes);
-
-        if (recipes.length === 0) recipesNode.innerHTML = 'No recipe matches your criteria... <br> You can search for "apple pie", "fish", etc...'; 
-          
-    };
-
-    searchInput.addEventListener("keyup", filterRecipes);
 })();
