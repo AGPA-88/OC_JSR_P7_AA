@@ -14,7 +14,6 @@ const getRecipes = async () => {
 
 
 // GET INGREDIENTS
-
 const getIngredients = (recipes) => {
     let ingredients = [];
     recipes.forEach((recipe) => {
@@ -31,7 +30,6 @@ const getIngredients = (recipes) => {
 };
 
 // GET DEVICES
-
 const getDevices = (recipes) => {
     let devices = [];
     recipes.forEach((recipes) => {
@@ -46,7 +44,6 @@ const getDevices = (recipes) => {
 };
 
 // GET UTENSILS
-
 const getUstensils = (recipes) => {
     let ustensils = [];
     recipes.forEach((recipe) => {
@@ -70,6 +67,8 @@ const getUstensils = (recipes) => {
     let recipes = data;
     let filters = {
         ingredients: [],
+        devices: [],
+        ustensils: []
     };
 
     //HTML Elements
@@ -124,23 +123,82 @@ const getUstensils = (recipes) => {
         });
     };
 
+    const displayEnabledTags = (filters) => {
+        selectedFilters.innerHTML="";
+        displayEnabledIngredients(filters);
+        displayEnabledDevices(filters);
+        displayEnabledUstensils(filters);
+
+    };
+
     // RENDER INGREDIENTS TAGS
     const displayEnabledIngredients = (filters) => {
-        selectedFilters.innerHTML="";
 
-        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div class="ingredient">${ing} <button class="remove-filter" data-value="${ing}">x</button></div>`);
 
-        document.querySelectorAll('.remove-filter')?.forEach(elm => {
+        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div class="ingredient">${ing} <div class="remove-ingredient-filter" data-value="${ing}">x</div></div>`);
+
+        document.querySelectorAll('.remove-ingredient-filter')?.forEach(elm => {
+            console.log(elm);
             elm.addEventListener('click', e => {
                 e.preventDefault();
     
-                const newFilter = filters.ingredients.filter(ing => {
+                const newIngFilter = filters.ingredients.filter(ing => {
                     console.log({ing, value: e.target.dataset.value});
                     return ing !== e.target.dataset.value;
                 });
     
-                filters.ingredients = newFilter;
-                displayEnabledIngredients(filters);
+                filters.ingredients = newIngFilter;
+                displayEnabledTags(filters);
+                filterRecipes(e);
+    
+    
+                console.dir(e.target);
+            });
+        });
+    };
+
+    // RENDER DEVICES TAGS
+    const displayEnabledDevices = (filters) => {
+
+        filters.devices.map((dev) => selectedFilters.innerHTML+=`<div class="devices">${dev} <div class="remove-device-filter" data-value="${dev}">x</div></div>`);
+
+        document.querySelectorAll('.remove-device-filter')?.forEach(elm => {
+            elm.addEventListener('click', e => {
+                e.preventDefault();
+    
+                const newDevFilter = filters.devices.filter(dev => {
+                    console.log({dev, value: e.target.dataset.value});
+                    return dev !== e.target.dataset.value;
+                });
+    
+                filters.devices = newDevFilter;
+                console.log(filters);
+                displayEnabledTags(filters);
+                filterRecipes(e);
+    
+    
+                console.dir(e.target);
+            });
+        });
+    };
+
+
+    // RENDER UTENSILS TAGS
+    const displayEnabledUstensils = (filters) => {
+
+        filters.ustensils.map((ust) => selectedFilters.innerHTML+=`<div class="ustensil">${ust} <div class="remove-ustensil-filter" data-value="${ust}">x</div></div>`);
+
+        document.querySelectorAll('.remove-ustensil-filter')?.forEach(elm => {
+            elm.addEventListener('click', e => {
+                e.preventDefault();
+    
+                const newUstFilter = filters.ustensils.filter(ust => {
+                    console.log({ust, value: e.target.dataset.value});
+                    return ust !== e.target.dataset.value;
+                });
+    
+                filters.ustensils = newUstFilter;
+                displayEnabledTags(filters);
                 filterRecipes(e);
     
     
@@ -153,10 +211,20 @@ const getUstensils = (recipes) => {
     // TODO : INSERT AFTER THE FILTER FUNCTIONS DECLARATION
 
     const filterIngredientsAndRecipes = (e) => {
-        console.log('tata');
         filterIngredients(e);
         filterRecipes(e);
+    };
+
+    const filterDevicesAndRecipes = (e) => {
+        console.log('tata');
+        filterDevices(e);
+        filterRecipes(e);
         console.log('toto');
+    };
+
+    const filterUstensilsAndRecipes = (e) => {
+        filterUstensils(e);
+        filterRecipes(e);
     };
 
     // FILTER RECIPES
@@ -175,13 +243,33 @@ const getUstensils = (recipes) => {
         }else{
             recipes = data;
         }
-        console.log(filters.ingredients);
-    
+
+        // INGREDIENTS
         if (filters.ingredients.length > 0) {
             console.log("Ingrdient filtering");
             let filteredRecipes = recipes;
             filters.ingredients.forEach(ingredient => {
                 filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ingredients).toLocaleLowerCase().includes(ingredient))];
+            });
+            recipes = filteredRecipes;
+        }
+
+        // DEVICES
+        if (filters.devices.length > 0) {
+            console.log("Devices filtering");
+            let filteredRecipes = recipes;
+            filters.devices.forEach(device => {
+                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.appliance).toLocaleLowerCase().includes(device))];
+            });
+            recipes = filteredRecipes;
+        }
+
+        // USTENSILS
+        if (filters.ustensils.length > 0) {
+            console.log("Ustensils filtering");
+            let filteredRecipes = recipes;
+            filters.ustensils.forEach(ustensil => {
+                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ustensils).toLocaleLowerCase().includes(ustensil))];
             });
             recipes = filteredRecipes;
         }
@@ -201,8 +289,6 @@ const getUstensils = (recipes) => {
         document.querySelector("#ingredients-list").innerHTML = "";
         document.querySelector("#ingredients-select").classList.add("open");
     
-    
-    
         ingredients.map((i) => {
             document.querySelector("#ingredients-list").innerHTML += `<li><button class="select-ingredient">${i}</button></li>`;
         });
@@ -212,7 +298,7 @@ const getUstensils = (recipes) => {
     
             console.log(e.target.innerText);
             filters.ingredients = [...filters.ingredients, e.target.innerText];
-            displayEnabledIngredients(filters);
+            displayEnabledTags(filters);
             // document.querySelector("#ingredients-select").classList.remove("open");
             filterIngredientsAndRecipes(e);
         
@@ -228,9 +314,20 @@ const getUstensils = (recipes) => {
         document.querySelector("#devices-list").innerHTML = "";
         document.querySelector("#devices-select").classList.add("open");
     
-        devices.map((i) => {
-            document.querySelector("#devices-list").innerHTML += `<li><button>${i}</button></li>`;
+        devices.map((device) => {
+            document.querySelector("#devices-list").innerHTML += `<li><button class="select-devices">${device}</button></li>`;
         });
+
+        document.querySelectorAll('.select-devices')?.forEach(btn => btn.addEventListener('click', (e) => {
+            e.preventDefault();
+    
+            console.log(e.target.innerText);
+            filters.devices = [...filters.devices, e.target.innerText];
+            displayEnabledTags(filters);
+            // document.querySelector("#ingredients-select").classList.remove("open");
+            filterDevicesAndRecipes(e);
+        
+        }));
     };
     
     
@@ -242,9 +339,20 @@ const getUstensils = (recipes) => {
         document.querySelector("#ustensils-list").innerHTML = "";
         document.querySelector("#ustensils-select").classList.add("open");
     
-        ustensils.map((i) => {
-            document.querySelector("#ustensils-list").innerHTML += `<li><button>${i}</button></li>`;
+        ustensils.map((ustensil) => {
+            document.querySelector("#ustensils-list").innerHTML += `<li><button class="select-ustensils">${ustensil}</button></li>`;
         });
+
+        document.querySelectorAll('.select-ustensils')?.forEach(btn => btn.addEventListener('click', (e) => {
+            e.preventDefault();
+    
+            console.log(e.target.innerText);
+            filters.ustensils = [...filters.ustensils, e.target.innerText];
+            displayEnabledTags(filters);
+            // document.querySelector("#ingredients-select").classList.remove("open");
+            filterUstensilsAndRecipes(e);
+        
+        }));
     };
 
     // Event adding
@@ -289,7 +397,7 @@ const getUstensils = (recipes) => {
     // RENDERING 
     // TODO : INSERT HERE THE RENDER/DISPLAY FUNCTIONS CALL
     
-    displayEnabledIngredients(filters);
+    displayEnabledTags(filters);
 
     renderRecipes(recipes);
 
