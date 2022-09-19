@@ -135,7 +135,7 @@ const getUstensils = (recipes) => {
     const displayEnabledIngredients = (filters) => {
 
 
-        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div class="ingredient">${ing} <div class="remove-ingredient-filter" data-value="${ing}">x</div></div>`);
+        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div id="filter-tags" class="ingredient ingredient-tag-color">${ing} <div class="remove-ingredient-filter" data-value="${ing}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
 
         document.querySelectorAll('.remove-ingredient-filter')?.forEach(elm => {
             console.log(elm);
@@ -151,7 +151,6 @@ const getUstensils = (recipes) => {
                 displayEnabledTags(filters);
                 filterRecipes(e);
     
-    
                 console.dir(e.target);
             });
         });
@@ -160,7 +159,7 @@ const getUstensils = (recipes) => {
     // RENDER DEVICES TAGS
     const displayEnabledDevices = (filters) => {
 
-        filters.devices.map((dev) => selectedFilters.innerHTML+=`<div class="devices">${dev} <div class="remove-device-filter" data-value="${dev}">x</div></div>`);
+        filters.devices.map((dev) => selectedFilters.innerHTML+=`<div id="filter-tags" class="devices devices-tag-color">${dev} <div class="remove-device-filter" data-value="${dev}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
 
         document.querySelectorAll('.remove-device-filter')?.forEach(elm => {
             elm.addEventListener('click', e => {
@@ -186,7 +185,7 @@ const getUstensils = (recipes) => {
     // RENDER UTENSILS TAGS
     const displayEnabledUstensils = (filters) => {
 
-        filters.ustensils.map((ust) => selectedFilters.innerHTML+=`<div class="ustensil">${ust} <div class="remove-ustensil-filter" data-value="${ust}">x</div></div>`);
+        filters.ustensils.map((ust) => selectedFilters.innerHTML+=`<div id="filter-tags" class="ustensil ustensils-tag-color">${ust} <div class="remove-ustensil-filter" data-value="${ust}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
 
         document.querySelectorAll('.remove-ustensil-filter')?.forEach(elm => {
             elm.addEventListener('click', e => {
@@ -216,10 +215,8 @@ const getUstensils = (recipes) => {
     };
 
     const filterDevicesAndRecipes = (e) => {
-        console.log('tata');
         filterDevices(e);
         filterRecipes(e);
-        console.log('toto');
     };
 
     const filterUstensilsAndRecipes = (e) => {
@@ -293,6 +290,9 @@ const getUstensils = (recipes) => {
             document.querySelector("#ingredients-list").innerHTML += `<li><button class="select-ingredient">${i}</button></li>`;
         });
     
+        document.querySelector(".fa-angle-down").style.display="none";
+        document.querySelector(".fa-angle-up").style.display="inline";
+        
         document.querySelectorAll('.select-ingredient')?.forEach(btn => btn.addEventListener('click', (e) => {
             e.preventDefault();
     
@@ -313,10 +313,13 @@ const getUstensils = (recipes) => {
         const devices = getDevices(recipes);
         document.querySelector("#devices-list").innerHTML = "";
         document.querySelector("#devices-select").classList.add("open");
-    
+        
         devices.map((device) => {
             document.querySelector("#devices-list").innerHTML += `<li><button class="select-devices">${device}</button></li>`;
         });
+        
+        document.querySelector(".fa-angle-down").style.display="none";
+        document.querySelector(".fa-angle-up").style.display="inline";
 
         document.querySelectorAll('.select-devices')?.forEach(btn => btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -338,11 +341,14 @@ const getUstensils = (recipes) => {
         const ustensils = getUstensils(recipes);
         document.querySelector("#ustensils-list").innerHTML = "";
         document.querySelector("#ustensils-select").classList.add("open");
-    
+        
         ustensils.map((ustensil) => {
             document.querySelector("#ustensils-list").innerHTML += `<li><button class="select-ustensils">${ustensil}</button></li>`;
         });
-
+        
+        document.querySelector(".fa-angle-down").style.display="none";
+        document.querySelector(".fa-angle-up").style.display="inline";
+        
         document.querySelectorAll('.select-ustensils')?.forEach(btn => btn.addEventListener('click', (e) => {
             e.preventDefault();
     

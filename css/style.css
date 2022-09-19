@@ -2,7 +2,13 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    padding: 25px;
+    padding-top: 42px;
+    
+}
+
+#lpp-logo{
+    width: 268px;
+    height: 93px;
 }
 
 
@@ -13,6 +19,7 @@
     justify-content: center;
     width: 100%;
     padding: 25px;
+    padding-left: 0;
     
 }
 #search ::placeholder{
@@ -34,10 +41,12 @@
 
 /* BUTTONS SECTION */
 
-/* #button_container i {
-    display: flex;
-    justify-content: space-between;
-} */
+#button_container{
+    position: absolute;
+    z-index: 2;
+    padding-left: 0!important;
+    
+}
 
 #ingredients-select{
     background-color: #3282F7;
@@ -45,6 +54,7 @@
     margin: 5px;
     margin-left: 0;
     padding: 10px;
+    
 }
 
 #devices-select{
@@ -79,8 +89,49 @@ input{
     color: black;
 }
 
+/* TAGS  SECTION*/
+.fa-angle-up{
+    display: none;
+}
+
+#filter-tags{
+    cursor: pointer;
+    /* position: relative!important; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    margin: 5px;
+    height: 40px;
+    color: #fff;
+    background-color: #3282F7;
+    border-radius: 5px;
+}
+#filter-tags i{
+    padding-left: 10px;
+    padding-right: 0;
+}
+
+.ingredient-tag-color{
+    background-color: #3282F7;
+}
+.devices-tag-color{
+    background-color: #68D9A4!important;
+}
+.ustensils-tag-color{
+    background-color: #ED6454!important;
+}
+
+#selected-filters{
+    display: flex;
+    justify-content: start;
+}
 
 /* CARD SECTION */
+#recipes{
+    margin-top: 100px;
+}
+
 .card{
     max-width: 400px;
     /* height: 400px; */
@@ -134,6 +185,13 @@ input{
     display: none;
 }
 
+/* .select2 input{
+    background-color: transparent;
+    border: none;
+    color: white!important;
+} */
+
+
 .select2 .items-list {
     list-style: none;
     flex-wrap: wrap;
@@ -143,6 +201,7 @@ input{
 
 .select2 .items-list li {
     width: 33.33%;
+    max-width: 280px;
 }
 
 .select2 .items-list li button {
