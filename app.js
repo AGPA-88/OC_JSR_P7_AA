@@ -224,9 +224,8 @@ function mainSearch(recipes, input) {
     // });
     let result = [];
     for (let i = 0; i < recipes.length; i++) {
-      const recipe = recipes[i];
-      const recipeContent = JSON.stringify(recipe).toLocaleLowerCase()
-      if (recipeContent.includes(input)) result.push(recipe)
+      const recipeContent = JSON.stringify(recipes[i]).toLocaleLowerCase()
+      if (recipeContent.includes(input)) result.push(recipes[i])
     }
     recipes = result;
     return recipes;
