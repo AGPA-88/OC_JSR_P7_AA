@@ -93,43 +93,13 @@ const getRecipes = async () => {
     
         if (input.length > 2){
             console.log(filters);
-            recipes = recipes.filter((recipe) => {
-                return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
-            });
+            recipes = mainSearch(recipes, input);
       
         }else{
             recipes = data;
         }
 
-        // INGREDIENTS
-        if (filters.ingredients.length > 0) {
-            console.log("Ingrdient filtering");
-            let filteredRecipes = recipes;
-            filters.ingredients.forEach(ingredient => {
-                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ingredients).toLocaleLowerCase().includes(ingredient))];
-            });
-            recipes = filteredRecipes;
-        }
 
-        // DEVICES
-        if (filters.devices.length > 0) {
-            console.log("Devices filtering");
-            let filteredRecipes = recipes;
-            filters.devices.forEach(device => {
-                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.appliance).toLocaleLowerCase().includes(device))];
-            });
-            recipes = filteredRecipes;
-        }
-
-        // USTENSILS
-        if (filters.ustensils.length > 0) {
-            console.log("Ustensils filtering");
-            let filteredRecipes = recipes;
-            filters.ustensils.forEach(ustensil => {
-                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ustensils).toLocaleLowerCase().includes(ustensil))];
-            });
-            recipes = filteredRecipes;
-        }
         console.log({ recipes });
         renderRecipes(recipes);
     
@@ -248,3 +218,10 @@ const getRecipes = async () => {
     renderRecipes(recipes);
 
 })();
+function mainSearch(recipes, input) {
+    recipes = recipes.filter((recipe) => {
+        return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
+    });
+    return recipes;
+}
+
