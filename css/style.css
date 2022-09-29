@@ -3,7 +3,7 @@
     justify-content: center;
     width: 100%;
     padding-top: 42px;
-    
+
 }
 
 #lpp-logo{
@@ -20,7 +20,7 @@
     width: 100%;
     padding: 25px;
     padding-left: 0;
-    
+
 }
 #search ::placeholder{
     color: grey;
@@ -45,27 +45,27 @@
     position: absolute;
     z-index: 2;
     padding-left: 0!important;
-    
+
 }
 
 #ingredients-select{
     background-color: #3282F7;
-    /* width: 150px; */
+    max-width: 36vw;
     margin: 5px;
     margin-left: 0;
     padding: 10px;
-    
+
 }
 
 #devices-select{
     background-color: #68D9A4;
-    /* width: 150px; */
+    max-width: 36vw;
     margin: 5px;
     padding: 10px;
 }
 #ustensils-select{
     background-color: #ED6454;
-    /* width: 150px; */
+    max-width: 36vw;
     margin: 5px;
     padding: 10px;
 }
@@ -73,6 +73,10 @@
 #button_container{
     display: flex;
     padding: 15px;
+    cursor: pointer;
+}
+label{
+    cursor: pointer;
 }
 .search_buttons{
     border-radius: 10px;
@@ -94,9 +98,8 @@ input{
     display: none;
 }
 
-#filter-tags{
+.tags{
     cursor: pointer;
-    /* position: relative!important; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -107,7 +110,7 @@ input{
     background-color: #3282F7;
     border-radius: 5px;
 }
-#filter-tags i{
+.tags i{
     padding-left: 10px;
     padding-right: 0;
 }
@@ -145,19 +148,32 @@ input{
     height: 200px;
     background-color: grey;
 }
+.card:active{
+    background-color: yellowgreen;
+}
+.card:active .card-title{
+    background-color: yellowgreen;
+}
 .card-title{
     font-size: medium;
     font-weight: bold;
 }
 
+.card-text{
+    margin-bottom: 0;
+    margin-right: 15px;
+
+}
+
 .title_section{
     display: flex;
     justify-content: space-between;
-    width: 100%;    
+    width: 100%;
 }
 .description_section{
     display: grid;
     grid-template-columns: auto auto;
+    font-size: small;
     height: 200px;
     overflow: hidden;
     /* text-overflow: clip ellipsis!important; */
@@ -185,11 +201,16 @@ input{
     display: none;
 }
 
-/* .select2 input{
+.select2 input{
     background-color: transparent;
     border: none;
     color: white!important;
-} */
+    outline: none;
+}
+
+.select2 ::placeholder{
+    color: lightgray;
+}
 
 
 .select2 .items-list {
@@ -201,7 +222,6 @@ input{
 
 .select2 .items-list li {
     width: 33.33%;
-    max-width: 280px;
 }
 
 .select2 .items-list li button {
@@ -209,6 +229,7 @@ input{
     color: #fff;
     border: 0;
     cursor: pointer;
+    text-align: left;
 }
 
 .select2.open input, .select2.open .items-list {
