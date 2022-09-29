@@ -219,8 +219,8 @@ const getRecipes = async () => {
 
 })();
 function mainSearch(recipes, input) {
-    const recipeContent = JSON.stringify(recipes[i]).toLocaleLowerCase()
     recipes = recipes.filter((recipe) => {
+        const recipeContent = JSON.stringify(recipe).toLocaleLowerCase()
         return recipeContent.includes(input);
     });
     return recipes;
