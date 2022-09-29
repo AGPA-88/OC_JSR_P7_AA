@@ -13,51 +13,6 @@ const getRecipes = async () => {
 };
 
 
-// GET INGREDIENTS
-const getIngredients = (recipes) => {
-    let ingredients = [];
-    recipes.forEach((recipe) => {
-        recipe.ingredients.forEach((ingredient) => {
-            if (!ingredients.includes(ingredient.ingredient.toLowerCase()) 
-            && 
-            ingredient.ingredient.toLowerCase().includes(document.querySelector("#ingredients-search").value.toLowerCase())) {
-                ingredients.push(ingredient.ingredient.toLowerCase());
-            }
-        });
-    });
-
-    return ingredients;
-};
-
-// GET DEVICES
-const getDevices = (recipes) => {
-    let devices = [];
-    recipes.forEach((recipes) => {
-        if (!devices.includes(recipes.appliance.toLowerCase())
-        &&
-        recipes.appliance.toLowerCase().includes(document.querySelector("#devices-search").value.toLowerCase())) {
-            devices.push(recipes.appliance.toLowerCase());
-        }
-    });
-
-    return devices;
-};
-
-// GET UTENSILS
-const getUstensils = (recipes) => {
-    let ustensils = [];
-    recipes.forEach((recipe) => {
-        recipe.ustensils.forEach((ustensil) => {
-            if (!ustensils.includes(ustensil.toLowerCase())
-            &&
-            ustensil.toLowerCase().includes(document.querySelector("#ustensils-search").value.toLowerCase())) {
-                ustensils.push(ustensil.toLowerCase());
-            }
-        });
-    });
-
-    return ustensils;
-};
 
 
 (async () => {
@@ -123,106 +78,11 @@ const getUstensils = (recipes) => {
         });
     };
 
-    const displayEnabledTags = (filters) => {
-        selectedFilters.innerHTML="";
-        displayEnabledIngredients(filters);
-        displayEnabledDevices(filters);
-        displayEnabledUstensils(filters);
 
-    };
-
-    // RENDER INGREDIENTS TAGS
-    const displayEnabledIngredients = (filters) => {
-
-
-        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div id="filter-tags" class="ingredient ingredient-tag-color">${ing} <div class="remove-ingredient-filter" data-value="${ing}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
-
-        document.querySelectorAll('.remove-ingredient-filter')?.forEach(elm => {
-            console.log(elm);
-            elm.addEventListener('click', e => {
-                e.preventDefault();
-    
-                const newIngFilter = filters.ingredients.filter(ing => {
-                    console.log({ing, value: e.target.dataset.value});
-                    return ing !== e.target.dataset.value;
-                });
-    
-                filters.ingredients = newIngFilter;
-                displayEnabledTags(filters);
-                filterRecipes(e);
-    
-                console.dir(e.target);
-            });
-        });
-    };
-
-    // RENDER DEVICES TAGS
-    const displayEnabledDevices = (filters) => {
-
-        filters.devices.map((dev) => selectedFilters.innerHTML+=`<div id="filter-tags" class="devices devices-tag-color">${dev} <div class="remove-device-filter" data-value="${dev}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
-
-        document.querySelectorAll('.remove-device-filter')?.forEach(elm => {
-            elm.addEventListener('click', e => {
-                e.preventDefault();
-    
-                const newDevFilter = filters.devices.filter(dev => {
-                    console.log({dev, value: e.target.dataset.value});
-                    return dev !== e.target.dataset.value;
-                });
-    
-                filters.devices = newDevFilter;
-                console.log(filters);
-                displayEnabledTags(filters);
-                filterRecipes(e);
-    
-    
-                console.dir(e.target);
-            });
-        });
-    };
-
-
-    // RENDER UTENSILS TAGS
-    const displayEnabledUstensils = (filters) => {
-
-        filters.ustensils.map((ust) => selectedFilters.innerHTML+=`<div id="filter-tags" class="ustensil ustensils-tag-color">${ust} <div class="remove-ustensil-filter" data-value="${ust}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
-
-        document.querySelectorAll('.remove-ustensil-filter')?.forEach(elm => {
-            elm.addEventListener('click', e => {
-                e.preventDefault();
-    
-                const newUstFilter = filters.ustensils.filter(ust => {
-                    console.log({ust, value: e.target.dataset.value});
-                    return ust !== e.target.dataset.value;
-                });
-    
-                filters.ustensils = newUstFilter;
-                displayEnabledTags(filters);
-                filterRecipes(e);
-    
-    
-                console.dir(e.target);
-            });
-        });
-    };
 
     // Filtering functions
     // TODO : INSERT AFTER THE FILTER FUNCTIONS DECLARATION
 
-    const filterIngredientsAndRecipes = (e) => {
-        filterIngredients(e);
-        filterRecipes(e);
-    };
-
-    const filterDevicesAndRecipes = (e) => {
-        filterDevices(e);
-        filterRecipes(e);
-    };
-
-    const filterUstensilsAndRecipes = (e) => {
-        filterUstensils(e);
-        filterRecipes(e);
-    };
 
     // FILTER RECIPES
     const filterRecipes = (e) => {
@@ -282,14 +142,9 @@ const getUstensils = (recipes) => {
     const filterIngredients = (e) => {
         console.log({ e });
     
-        const ingredients = getIngredients(recipes);
         document.querySelector("#ingredients-list").innerHTML = "";
         document.querySelector("#ingredients-select").classList.add("open");
-    
-        ingredients.map((i) => {
-            document.querySelector("#ingredients-list").innerHTML += `<li><button class="select-ingredient">${i}</button></li>`;
-        });
-    
+
         document.querySelector(".fa-angle-down").style.display="none";
         document.querySelector(".fa-angle-up").style.display="inline";
         
@@ -298,8 +153,6 @@ const getUstensils = (recipes) => {
     
             console.log(e.target.innerText);
             filters.ingredients = [...filters.ingredients, e.target.innerText];
-            displayEnabledTags(filters);
-            // document.querySelector("#ingredients-select").classList.remove("open");
             filterIngredientsAndRecipes(e);
         
         }));
@@ -310,14 +163,9 @@ const getUstensils = (recipes) => {
     const filterDevices = (e) => {
         console.log({ e });
     
-        const devices = getDevices(recipes);
         document.querySelector("#devices-list").innerHTML = "";
         document.querySelector("#devices-select").classList.add("open");
-        
-        devices.map((device) => {
-            document.querySelector("#devices-list").innerHTML += `<li><button class="select-devices">${device}</button></li>`;
-        });
-        
+
         document.querySelector(".fa-angle-down").style.display="none";
         document.querySelector(".fa-angle-up").style.display="inline";
 
@@ -326,7 +174,6 @@ const getUstensils = (recipes) => {
     
             console.log(e.target.innerText);
             filters.devices = [...filters.devices, e.target.innerText];
-            displayEnabledTags(filters);
             // document.querySelector("#ingredients-select").classList.remove("open");
             filterDevicesAndRecipes(e);
         
@@ -338,14 +185,9 @@ const getUstensils = (recipes) => {
     const filterUstensils = (e) => {
         console.log({ e });
     
-        const ustensils = getUstensils(recipes);
         document.querySelector("#ustensils-list").innerHTML = "";
         document.querySelector("#ustensils-select").classList.add("open");
-        
-        ustensils.map((ustensil) => {
-            document.querySelector("#ustensils-list").innerHTML += `<li><button class="select-ustensils">${ustensil}</button></li>`;
-        });
-        
+
         document.querySelector(".fa-angle-down").style.display="none";
         document.querySelector(".fa-angle-up").style.display="inline";
         
@@ -354,7 +196,6 @@ const getUstensils = (recipes) => {
     
             console.log(e.target.innerText);
             filters.ustensils = [...filters.ustensils, e.target.innerText];
-            displayEnabledTags(filters);
             // document.querySelector("#ingredients-select").classList.remove("open");
             filterUstensilsAndRecipes(e);
         
@@ -403,7 +244,6 @@ const getUstensils = (recipes) => {
     // RENDERING 
     // TODO : INSERT HERE THE RENDER/DISPLAY FUNCTIONS CALL
     
-    displayEnabledTags(filters);
 
     renderRecipes(recipes);
 
