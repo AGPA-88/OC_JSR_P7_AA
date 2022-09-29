@@ -219,9 +219,16 @@ const getRecipes = async () => {
 
 })();
 function mainSearch(recipes, input) {
-    recipes = recipes.filter((recipe) => {
-        return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
-    });
+    // recipes = recipes.filter((recipe) => {
+    //     return JSON.stringify(recipe).toLocaleLowerCase().includes(input);
+    // });
+    let result = [];
+    for (let i = 0; i < recipes.length; i++) {
+      const recipe = recipes[i];
+      const recipeContent = JSON.stringify(recipe).toLocaleLowerCase()
+      if (recipeContent.includes(input)) result.push(recipe)
+    }
+    recipes = result;
     return recipes;
 }
 
