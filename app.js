@@ -11,6 +11,14 @@ const REMOVE_INGREDIENT_CLASSES = 'remove-filter remove-ingredient-filter';
 const REMOVE_DEVICE_CLASSES = 'remove-filter remove-device-filter'
 const REMOVE_USTENSIL_CLASSES = 'remove-filter remove-ustensil-filter'
 
+const getSelectNode = (type) => {
+    return document.querySelector(`#${type}s-select`)
+};
+
+const capitalize = s => s && s[0].toUpperCase() + s.slice(1);
+const getCloseButton = (type) => {
+    return document.querySelector(`#close${capitalize(type)}`)
+}
 
 // GET RECIPES
 const getRecipes = async () => {
@@ -19,52 +27,44 @@ const getRecipes = async () => {
 };
 
 
-// GET INGREDIENTS
-const getIngredients = (recipes) => {
-    let ingredients = [];
+const getInformation = (recipes, type) => {
+    let result = [];
     recipes.forEach((recipe) => {
-        recipe.ingredients.forEach((ingredient) => {
-            if (!ingredients.includes(ingredient.ingredient.toLowerCase()) 
-            && 
-            ingredient.ingredient.toLowerCase().includes(document.querySelector("#ingredients-search").value.toLowerCase())) {
-                ingredients.push(ingredient.ingredient.toLowerCase());
+        let itemContent = ""; 
+        switch (type){
+            case 'ingredient':
+                recipe[type + 's'].forEach((item) => {
+                        itemContent = item.ingredient.toLowerCase()
+                    if (!result.includes(itemContent) 
+                    && 
+                    itemContent.includes(document.querySelector(`#${type}s-search`).value.toLowerCase())) {
+                        result.push(itemContent);
+                    }
+                });
+                break
+
+            case 'device':
+                if (!result.includes(recipe.appliance.toLowerCase())
+                &&
+                recipe.appliance.toLowerCase().includes(document.querySelector("#devices-search").value.toLowerCase())) {
+                    result.push(recipe.appliance.toLowerCase());
+                }
+                break
+
+            case 'ustensil':
+                recipe.ustensils.forEach((ustensil) => {
+                    if (!result.includes(ustensil.toLowerCase())
+                    &&
+                    ustensil.toLowerCase().includes(document.querySelector("#ustensils-search").value.toLowerCase())) {
+                        result.push(ustensil.toLowerCase());
+                    }
+                });
+                break
+
             }
-        });
     });
 
-    return ingredients;
-};
-
-
-
-// GET DEVICES
-const getDevices = (recipes) => {
-    let devices = [];
-    recipes.forEach((recipes) => {
-        if (!devices.includes(recipes.appliance.toLowerCase())
-        &&
-        recipes.appliance.toLowerCase().includes(document.querySelector("#devices-search").value.toLowerCase())) {
-            devices.push(recipes.appliance.toLowerCase());
-        }
-    });
-
-    return devices;
-};
-
-// GET UTENSILS
-const getUstensils = (recipes) => {
-    let ustensils = [];
-    recipes.forEach((recipe) => {
-        recipe.ustensils.forEach((ustensil) => {
-            if (!ustensils.includes(ustensil.toLowerCase())
-            &&
-            ustensil.toLowerCase().includes(document.querySelector("#ustensils-search").value.toLowerCase())) {
-                ustensils.push(ustensil.toLowerCase());
-            }
-        });
-    });
-
-    return ustensils;
+    return result;
 };
 
 
@@ -166,42 +166,133 @@ const getUstensils = (recipes) => {
 
     const closeIngredientFilter = (e)=> {
         if (e) e.stopPropagation()
-        ingredientsSelect.classList.remove("open");
+        getSelectNode('ingredient').classList.remove("open");
         document.querySelector("#openIngredient").style.display="inline";
         document.querySelector("#closeIngredient").style.display="none";
         document.querySelector("#labelIngredient").style.display="inline";
         document.querySelector("#ingredients-search").style.display="none";
-        ingredientsSelect.addEventListener(
+        getSelectNode('ingredient').addEventListener(
             "click",
             filterIngredients
         );
     }
     const closeDeviceFilter = (e)=> {
         if (e) e.stopPropagation()
-        devicesSelect.classList.remove("open");
+        getSelectNode('device').classList.remove("open");
         document.querySelector("#openDevice").style.display="inline";
         document.querySelector("#closeDevice").style.display="none";
         document.querySelector("#labelDevice").style.display="inline";
         document.querySelector("#devices-search").style.display="none";
-        devicesSelect.addEventListener(
+        getSelectNode('device').addEventListener(
             "click",
             filterDevices
         );
     }
     const closeUstensilFilter = (e)=> {
         if (e) e.stopPropagation()
-        ustensilsSelect.classList.remove("open");
+        getSelectNode('ustensil').classList.remove("open");
         document.querySelector("#openUstensil").style.display="inline";
         document.querySelector("#closeUstensil").style.display="none";
         document.querySelector("#labelUstensil").style.display="inline";
         document.querySelector("#ustensils-search").style.display="none";
-        ustensilsSelect.addEventListener(
+        getSelectNode('ustensil').addEventListener(
             "click",
             filterUstensils
         );
     }
 
     // Filtering functions
+
+    const filterByTags = (tagName, tagType) => {
+        if (tagType === "ingredient") {
+            closeDeviceFilter();
+            closeUstensilFilter();
+            
+            const tagsOfRecipes = getInformation(recipes, tagType);
+            document.querySelector(`#${tagType}s-list`).innerHTML = "";
+            getSelectNode(tagType).classList.add("open");
+            
+            tagsOfRecipes.map((tag) => {    
+                if (!filters[tagType + 's'].includes(tag)) document.querySelector(`#${tagType}s-list`).innerHTML += `<li><button class="select-${tagType}">${tag}</button></li>`;
+            });
+            
+            document.querySelector(`#open${capitalize(tagType)}`).style.display="none";
+            document.querySelector(`#close${capitalize(tagType)}`).style.display="inline";
+            document.querySelector(`#label${capitalize(tagType)}`).style.display="none";
+            document.querySelector(`#${tagType}s-search`).style.display="inline";
+    
+            
+            document.querySelectorAll(`.select-${tagType}`)?.forEach(btn => btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                console.log(e.target.innerText);
+                filters[tagType + 's'] = [...filters[tagType + 's'], e.target.innerText];
+                displayEnabledTags(filters);
+                filterIngredientsAndRecipes(e);
+                
+            }));
+            getSelectNode(tagType).removeEventListener(
+                "click",
+                filterIngredients
+            );
+        };
+
+        if (tagType === "device") {
+            closeIngredientFilter();
+            closeUstensilFilter();
+        
+            const devices = getInformation(recipes, 'device');
+            document.querySelector("#devices-list").innerHTML = "";
+            document.querySelector("#devices-select").classList.add("open");
+            
+            devices.map((device) => {
+                if (!filters.devices.includes(device)) document.querySelector("#devices-list").innerHTML += `<li><button class="select-devices">${device}</button></li>`;
+            });
+            
+            document.querySelector("#openDevice").style.display="none";
+            document.querySelector("#closeDevice").style.display="inline";
+            document.querySelector("#labelDevice").style.display="none";
+            document.querySelector("#devices-search").style.display="inline";
+    
+            document.querySelectorAll('.select-devices')?.forEach(btn => btn.addEventListener('click', (e) => {
+                e.preventDefault();
+        
+                console.log(e.target.innerText);
+                filters.devices = [...filters.devices, e.target.innerText];
+                displayEnabledTags(filters);
+                filterDevicesAndRecipes(e);
+            }));
+        };
+        
+
+        if (tagType === "ustensil") {
+            closeIngredientFilter();
+            closeDeviceFilter();
+        
+            const ustensils = getInformation(recipes, 'ustensil');
+            document.querySelector("#ustensils-list").innerHTML = "";
+            document.querySelector("#ustensils-select").classList.add("open");
+            
+            ustensils.map((ustensil) => {
+                if (!filters.ustensils.includes(ustensil)) document.querySelector("#ustensils-list").innerHTML += `<li><button class="select-ustensils">${ustensil}</button></li>`;
+            });
+            
+            document.querySelector("#openUstensil").style.display="none";
+            document.querySelector("#closeUstensil").style.display="inline";
+            document.querySelector("#labelUstensil").style.display="none";
+            document.querySelector("#ustensils-search").style.display="inline";
+            
+            document.querySelectorAll('.select-ustensils')?.forEach(btn => btn.addEventListener('click', (e) => {
+                e.preventDefault();
+        
+                console.log(e.target.innerText);
+                filters.ustensils = [...filters.ustensils, e.target.innerText];
+                displayEnabledTags(filters);
+                filterUstensilsAndRecipes(e);
+            
+            }));
+        };
+    };
 
     const filterIngredientsAndRecipes = (e) => {
         filterIngredients(e);
@@ -280,109 +371,29 @@ const getUstensils = (recipes) => {
      
     // FILTER INGREDIENTES
     const filterIngredients = (e) => {
-        console.log({ e });
-        closeDeviceFilter();
-        closeUstensilFilter();
-        
-        const ingredients = getIngredients(recipes);
-        document.querySelector("#ingredients-list").innerHTML = "";
-        ingredientsSelect.classList.add("open");
-        
-        ingredients.map((ingredient) => {    
-            if (!filters.ingredients.includes(ingredient)) document.querySelector("#ingredients-list").innerHTML += `<li><button class="select-ingredient">${ingredient}</button></li>`;
-        });
-        
-        document.querySelector("#openIngredient").style.display="none";
-        document.querySelector("#closeIngredient").style.display="inline";
-        document.querySelector("#labelIngredient").style.display="none";
-        document.querySelector("#ingredients-search").style.display="inline";
-
-        
-        document.querySelectorAll('.select-ingredient')?.forEach(btn => btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            console.log(e.target.innerText);
-            filters.ingredients = [...filters.ingredients, e.target.innerText];
-            displayEnabledTags(filters);
-            filterIngredientsAndRecipes(e);
-            
-        }));
-        ingredientsSelect.removeEventListener(
-            "click",
-            filterIngredients
-        );
-        console.log(ingredientsSelect)
+        filterByTags('','ingredient');
     };
         
     
     // FILTER DEVICES
     const filterDevices = (e) => {
-        console.log({ e });
-        closeIngredientFilter();
-        closeUstensilFilter();
-    
-        const devices = getDevices(recipes);
-        document.querySelector("#devices-list").innerHTML = "";
-        document.querySelector("#devices-select").classList.add("open");
-        
-        devices.map((device) => {
-            if (!filters.devices.includes(device)) document.querySelector("#devices-list").innerHTML += `<li><button class="select-devices">${device}</button></li>`;
-        });
-        
-        document.querySelector("#openDevice").style.display="none";
-        document.querySelector("#closeDevice").style.display="inline";
-        document.querySelector("#labelDevice").style.display="none";
-        document.querySelector("#devices-search").style.display="inline";
-
-        document.querySelectorAll('.select-devices')?.forEach(btn => btn.addEventListener('click', (e) => {
-            e.preventDefault();
-    
-            console.log(e.target.innerText);
-            filters.devices = [...filters.devices, e.target.innerText];
-            displayEnabledTags(filters);
-            filterDevicesAndRecipes(e);
-        }));
+        filterByTags('','device');
     };
     
     
     // FILTER UTENSILS
     const filterUstensils = (e) => {
-        console.log({ e });
-        closeIngredientFilter();
-        closeDeviceFilter();
-    
-        const ustensils = getUstensils(recipes);
-        document.querySelector("#ustensils-list").innerHTML = "";
-        document.querySelector("#ustensils-select").classList.add("open");
-        
-        ustensils.map((ustensil) => {
-            if (!filters.ustensils.includes(ustensil)) document.querySelector("#ustensils-list").innerHTML += `<li><button class="select-ustensils">${ustensil}</button></li>`;
-        });
-        
-        document.querySelector("#openUstensil").style.display="none";
-        document.querySelector("#closeUstensil").style.display="inline";
-        document.querySelector("#labelUstensil").style.display="none";
-        document.querySelector("#ustensils-search").style.display="inline";
-        
-        document.querySelectorAll('.select-ustensils')?.forEach(btn => btn.addEventListener('click', (e) => {
-            e.preventDefault();
-    
-            console.log(e.target.innerText);
-            filters.ustensils = [...filters.ustensils, e.target.innerText];
-            displayEnabledTags(filters);
-            filterUstensilsAndRecipes(e);
-        
-        }));
+        filterByTags('','ustensil');
     };
 
     // Event adding
 
-    ingredientsSelect.addEventListener(
+    getSelectNode('ingredient').addEventListener(
         "click",
         filterIngredients
     );
 
-    closeIngredientButton.addEventListener(
+    getCloseButton('ingredient').addEventListener(
         "click",
         closeIngredientFilter
     )
@@ -395,12 +406,12 @@ const getUstensils = (recipes) => {
         filterIngredients
         );
         
-    devicesSelect.addEventListener(
+    getSelectNode('device').addEventListener(
         "click",
         filterDevices,
     );
 
-    closeDeviceButton.addEventListener(
+    getCloseButton('device').addEventListener(
         "click",
         closeDeviceFilter
     )
@@ -410,12 +421,12 @@ const getUstensils = (recipes) => {
     );
 
 
-    ustensilsSelect.addEventListener(
+    getSelectNode('ustensil').addEventListener(
         "click",
         filterUstensils,
     );
 
-    closeUstensilButton.addEventListener(
+    getCloseButton('ustensil').addEventListener(
         "click",
         closeUstensilFilter
     )
