@@ -4,21 +4,21 @@ const searchInput = document.querySelector("#search");
 const ingredientsSelect = document.querySelector("#ingredients-select");
 const devicesSelect = document.querySelector("#devices-select");
 const ustensilsSelect = document.querySelector("#ustensils-select");
-const closeIngredientButton = document.querySelector('#closeIngredient')
-const closeDeviceButton = document.querySelector('#closeDevice')
-const closeUstensilButton = document.querySelector('#closeUstensil')
+const closeIngredientButton = document.querySelector('#closeIngredient');
+const closeDeviceButton = document.querySelector('#closeDevice');
+const closeUstensilButton = document.querySelector('#closeUstensil');
 const REMOVE_INGREDIENT_CLASSES = 'remove-filter remove-ingredient-filter';
-const REMOVE_DEVICE_CLASSES = 'remove-filter remove-device-filter'
-const REMOVE_USTENSIL_CLASSES = 'remove-filter remove-ustensil-filter'
+const REMOVE_DEVICE_CLASSES = 'remove-filter remove-device-filter';
+const REMOVE_USTENSIL_CLASSES = 'remove-filter remove-ustensil-filter';
 
 const getSelectNode = (type) => {
-    return document.querySelector(`#${type}s-select`)
+    return document.querySelector(`#${type}s-select`);
 };
 
 const capitalize = s => s && s[0].toUpperCase() + s.slice(1);
 const getCloseButton = (type) => {
-    return document.querySelector(`#close${capitalize(type)}`)
-}
+    return document.querySelector(`#close${capitalize(type)}`);
+};
 
 // GET RECIPES
 const getRecipes = async () => {
@@ -32,36 +32,36 @@ const getInformation = (recipes, type) => {
     recipes.forEach((recipe) => {
         let itemContent = ""; 
         switch (type){
-            case 'ingredient':
-                recipe[type + 's'].forEach((item) => {
-                        itemContent = item.ingredient.toLowerCase()
-                    if (!result.includes(itemContent) 
+        case 'ingredient':
+            recipe[type + 's'].forEach((item) => {
+                itemContent = item.ingredient.toLowerCase();
+                if (!result.includes(itemContent) 
                     && 
                     itemContent.includes(document.querySelector(`#${type}s-search`).value.toLowerCase())) {
-                        result.push(itemContent);
-                    }
-                });
-                break
+                    result.push(itemContent);
+                }
+            });
+            break;
 
-            case 'device':
-                if (!result.includes(recipe.appliance.toLowerCase())
+        case 'device':
+            if (!result.includes(recipe.appliance.toLowerCase())
                 &&
                 recipe.appliance.toLowerCase().includes(document.querySelector("#devices-search").value.toLowerCase())) {
-                    result.push(recipe.appliance.toLowerCase());
-                }
-                break
+                result.push(recipe.appliance.toLowerCase());
+            }
+            break;
 
-            case 'ustensil':
-                recipe.ustensils.forEach((ustensil) => {
-                    if (!result.includes(ustensil.toLowerCase())
+        case 'ustensil':
+            recipe.ustensils.forEach((ustensil) => {
+                if (!result.includes(ustensil.toLowerCase())
                     &&
                     ustensil.toLowerCase().includes(document.querySelector("#ustensils-search").value.toLowerCase())) {
-                        result.push(ustensil.toLowerCase());
-                    }
-                });
-                break
+                    result.push(ustensil.toLowerCase());
+                }
+            });
+            break;
 
-            }
+        }
     });
 
     return result;
@@ -133,166 +133,133 @@ const getInformation = (recipes, type) => {
 
     const displayEnabledTags = (filters) => {
         selectedFilters.innerHTML="";
-        displayEnabledIngredients(filters);
-        displayEnabledDevices(filters);
-        displayEnabledUstensils(filters);
+        displayEnabledTagItems(filters, 'ingredient');
+        displayEnabledTagItems(filters, 'device');
+        displayEnabledTagItems(filters, 'ustensil');
         addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipes);
-
     };
 
-    // RENDER INGREDIENTS TAGS
-    const displayEnabledIngredients = (filters) => {
-
-
-        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div id="filter-ingredients-tags" class="tags ingredient ingredient-tag-color">${ing} <div class="${REMOVE_INGREDIENT_CLASSES}" data-value="${ing}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
-
-        
-    };
-
-    // RENDER DEVICES TAGS
-    const displayEnabledDevices = (filters) => {
-
-        filters.devices.map((dev) => selectedFilters.innerHTML+=`<div id="filter-devices-tags" class="tags devices devices-tag-color">${dev} <div class="${REMOVE_DEVICE_CLASSES}" data-value="${dev}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
-    };
-
-
-    // RENDER UTENSILS TAGS
-    const displayEnabledUstensils = (filters) => {
-
-        filters.ustensils.map((ust) => selectedFilters.innerHTML+=`<div id="filter-ustensils-tags" class="tags ustensil ustensils-tag-color">${ust} <div class="${REMOVE_USTENSIL_CLASSES}" data-value="${ust}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
+    const displayEnabledTagItems =(filters, type) => {
+        let itemClass = '';
+        switch (type) {
+        case 'ingredient':
+            itemClass = REMOVE_INGREDIENT_CLASSES;
+            break;
+        case 'device':
+            itemClass = REMOVE_DEVICE_CLASSES;
+            break;
+        case 'ustensil':
+            itemClass = REMOVE_USTENSIL_CLASSES;
+            break;
+        }
+        filters[type + 's'].map((item) => {
+            selectedFilters.innerHTML+=`<div id="filter-${type}s-tags" class="tags ${type} ${type}-tag-color">${item} <div class="${itemClass}" data-value="${item}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`;
+        });
     };
 
     //closing functions
 
-    const closeIngredientFilter = (e)=> {
-        if (e) e.stopPropagation()
-        getSelectNode('ingredient').classList.remove("open");
-        document.querySelector("#openIngredient").style.display="inline";
-        document.querySelector("#closeIngredient").style.display="none";
-        document.querySelector("#labelIngredient").style.display="inline";
-        document.querySelector("#ingredients-search").style.display="none";
+    const closeTagFilter = (type) => {
+        
+        getSelectNode(type).classList.remove("open");
+        document.querySelector(`#open${capitalize(type)}`).style.display="inline";
+        document.querySelector(`#close${capitalize(type)}`).style.display="none";
+        document.querySelector(`#label${capitalize(type)}`).style.display="inline";
+        document.querySelector(`#${type}s-search`).style.display="none";
+        let filterItem = () => {};
+        switch (type) {
+        case 'ingredient':
+            filterItem = filterIngredients;
+            break;
+        case 'device':
+            filterItem = filterDevices;
+            break;
+        case 'ustensil':
+            filterItem = filterUstensils;
+            break;
+        } 
         getSelectNode('ingredient').addEventListener(
             "click",
-            filterIngredients
+            filterItem
         );
-    }
+    };
+
+    const closeIngredientFilter = (e)=> {
+        if (e) e.stopPropagation();
+        closeTagFilter('ingredient');
+    };
     const closeDeviceFilter = (e)=> {
-        if (e) e.stopPropagation()
-        getSelectNode('device').classList.remove("open");
-        document.querySelector("#openDevice").style.display="inline";
-        document.querySelector("#closeDevice").style.display="none";
-        document.querySelector("#labelDevice").style.display="inline";
-        document.querySelector("#devices-search").style.display="none";
-        getSelectNode('device').addEventListener(
-            "click",
-            filterDevices
-        );
-    }
+        if (e) e.stopPropagation();
+        closeTagFilter('device');
+    };
     const closeUstensilFilter = (e)=> {
-        if (e) e.stopPropagation()
-        getSelectNode('ustensil').classList.remove("open");
-        document.querySelector("#openUstensil").style.display="inline";
-        document.querySelector("#closeUstensil").style.display="none";
-        document.querySelector("#labelUstensil").style.display="inline";
-        document.querySelector("#ustensils-search").style.display="none";
-        getSelectNode('ustensil').addEventListener(
-            "click",
-            filterUstensils
-        );
-    }
+        if (e) e.stopPropagation();
+        closeTagFilter('ustensil');
+    };
 
     // Filtering functions
 
     const filterByTags = (tagName, tagType) => {
-        if (tagType === "ingredient") {
-            closeDeviceFilter();
-            closeUstensilFilter();
+        console.log(tagType);
+        closeDeviceFilter();
+        closeUstensilFilter();
+        closeIngredientFilter();
+        
+        const tagsOfRecipes = getInformation(recipes, tagType);
+        document.querySelector(`#${tagType}s-list`).innerHTML = "";
+        getSelectNode(tagType).classList.add("open");
+
+        tagsOfRecipes.map((tag) => {    
+            if (!filters[tagType + 's'].includes(tag)) document.querySelector(`#${tagType}s-list`).innerHTML += `<li><button class="select-${tagType}s">${tag}</button></li>`;
+        });
+
+        document.querySelector(`#open${capitalize(tagType)}`).style.display="none";
+        document.querySelector(`#close${capitalize(tagType)}`).style.display="inline";
+        document.querySelector(`#label${capitalize(tagType)}`).style.display="none";
+        document.querySelector(`#${tagType}s-search`).style.display="inline";
+
+        let filterItem = () => {};
+        switch (tagType) {
+        case 'ingredient':
+            filterItem = filterIngredients;
+            break;
+        case 'device':
+            filterItem = filterDevices;
+            break;
+        case 'ustensil':
+            filterItem = filterUstensils;
+            break;
+        } 
+
+        document.querySelectorAll(`.select-${tagType}s`)?.forEach(btn => btn.addEventListener('click', (e) => {
+            e.preventDefault();
             
-            const tagsOfRecipes = getInformation(recipes, tagType);
-            document.querySelector(`#${tagType}s-list`).innerHTML = "";
-            getSelectNode(tagType).classList.add("open");
-            
-            tagsOfRecipes.map((tag) => {    
-                if (!filters[tagType + 's'].includes(tag)) document.querySelector(`#${tagType}s-list`).innerHTML += `<li><button class="select-${tagType}">${tag}</button></li>`;
-            });
-            
-            document.querySelector(`#open${capitalize(tagType)}`).style.display="none";
-            document.querySelector(`#close${capitalize(tagType)}`).style.display="inline";
-            document.querySelector(`#label${capitalize(tagType)}`).style.display="none";
-            document.querySelector(`#${tagType}s-search`).style.display="inline";
-    
-            
-            document.querySelectorAll(`.select-${tagType}`)?.forEach(btn => btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                console.log(e.target.innerText);
-                filters[tagType + 's'] = [...filters[tagType + 's'], e.target.innerText];
-                displayEnabledTags(filters);
+            console.log(e.target.innerText);
+            filters[tagType + 's'] = [...filters[tagType + 's'], e.target.innerText];
+            displayEnabledTags(filters);
+
+            if (tagType === "ingredient") {
                 filterIngredientsAndRecipes(e);
+            }
+            if (tagType === "device") {    
+                filterDevicesAndRecipes(e);
+            }
+            
+            if (tagType === "ustensil") {            
+                filterUstensilsAndRecipes(e);
+            }
                 
-            }));
             getSelectNode(tagType).removeEventListener(
                 "click",
-                filterIngredients
+                filterItem
             );
-        };
+        }));
 
-        if (tagType === "device") {
-            closeIngredientFilter();
-            closeUstensilFilter();
-        
-            const devices = getInformation(recipes, 'device');
-            document.querySelector("#devices-list").innerHTML = "";
-            document.querySelector("#devices-select").classList.add("open");
-            
-            devices.map((device) => {
-                if (!filters.devices.includes(device)) document.querySelector("#devices-list").innerHTML += `<li><button class="select-devices">${device}</button></li>`;
-            });
-            
-            document.querySelector("#openDevice").style.display="none";
-            document.querySelector("#closeDevice").style.display="inline";
-            document.querySelector("#labelDevice").style.display="none";
-            document.querySelector("#devices-search").style.display="inline";
-    
-            document.querySelectorAll('.select-devices')?.forEach(btn => btn.addEventListener('click', (e) => {
-                e.preventDefault();
-        
-                console.log(e.target.innerText);
-                filters.devices = [...filters.devices, e.target.innerText];
-                displayEnabledTags(filters);
-                filterDevicesAndRecipes(e);
-            }));
-        };
-        
 
-        if (tagType === "ustensil") {
-            closeIngredientFilter();
-            closeDeviceFilter();
-        
-            const ustensils = getInformation(recipes, 'ustensil');
-            document.querySelector("#ustensils-list").innerHTML = "";
-            document.querySelector("#ustensils-select").classList.add("open");
-            
-            ustensils.map((ustensil) => {
-                if (!filters.ustensils.includes(ustensil)) document.querySelector("#ustensils-list").innerHTML += `<li><button class="select-ustensils">${ustensil}</button></li>`;
-            });
-            
-            document.querySelector("#openUstensil").style.display="none";
-            document.querySelector("#closeUstensil").style.display="inline";
-            document.querySelector("#labelUstensil").style.display="none";
-            document.querySelector("#ustensils-search").style.display="inline";
-            
-            document.querySelectorAll('.select-ustensils')?.forEach(btn => btn.addEventListener('click', (e) => {
-                e.preventDefault();
-        
-                console.log(e.target.innerText);
-                filters.ustensils = [...filters.ustensils, e.target.innerText];
-                displayEnabledTags(filters);
-                filterUstensilsAndRecipes(e);
-            
-            }));
-        };
+
     };
+
+    
 
     const filterIngredientsAndRecipes = (e) => {
         filterIngredients(e);
@@ -322,10 +289,7 @@ const getInformation = (recipes, type) => {
 
         const input = document.querySelector("#search-box").value.toLocaleLowerCase();
     
-        if (input.length > 2){
-            console.log(filters);
-            let filteredRecipes = [];
-            
+        if (input.length > 2){            
             recipes = mainSearch(recipes, input);
       
         }else{
@@ -387,6 +351,7 @@ const getInformation = (recipes, type) => {
     };
 
     // Event adding
+    searchInput.addEventListener("keyup", filterRecipes);
 
     getSelectNode('ingredient').addEventListener(
         "click",
@@ -396,15 +361,12 @@ const getInformation = (recipes, type) => {
     getCloseButton('ingredient').addEventListener(
         "click",
         closeIngredientFilter
-    )
+    );
 
-    
-    searchInput.addEventListener("keyup", filterRecipes);
-    
     document.querySelector("#ingredients-search").addEventListener(
         "keyup",
         filterIngredients
-        );
+    );
         
     getSelectNode('device').addEventListener(
         "click",
@@ -414,7 +376,7 @@ const getInformation = (recipes, type) => {
     getCloseButton('device').addEventListener(
         "click",
         closeDeviceFilter
-    )
+    );
     document.querySelector("#devices-search").addEventListener(
         "keyup",
         filterDevices
@@ -429,7 +391,7 @@ const getInformation = (recipes, type) => {
     getCloseButton('ustensil').addEventListener(
         "click",
         closeUstensilFilter
-    )
+    );
 
     document.querySelector("#ustensils-search").addEventListener(
         "keyup",
@@ -460,20 +422,20 @@ function addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipe
         elm.addEventListener('click', e => {
             e.preventDefault();
             const filterToClose = e.target.parentNode.getAttribute("data-value");
-            console.log(e.target.parentNode.className)
-            let filtersToCheck = []
+            console.log(e.target.parentNode.className);
+            let filtersToCheck = [];
             switch(e.target.parentNode.className){
-                case REMOVE_INGREDIENT_CLASSES:
-                    filtersToCheck = 'ingredients'
-                    break;
-                case REMOVE_DEVICE_CLASSES:
-                    filtersToCheck = 'devices'
-                    break;                    
-                case REMOVE_USTENSIL_CLASSES:
-                    filtersToCheck = 'ustensils'
-                    break;                    
-                default: 
-                    filtersToCheck = ''
+            case REMOVE_INGREDIENT_CLASSES:
+                filtersToCheck = 'ingredients';
+                break;
+            case REMOVE_DEVICE_CLASSES:
+                filtersToCheck = 'devices';
+                break;                    
+            case REMOVE_USTENSIL_CLASSES:
+                filtersToCheck = 'ustensils';
+                break;                    
+            default: 
+                filtersToCheck = '';
             }
             const newFilter = filters[filtersToCheck].filter(ing => {
                 console.log(ing);
