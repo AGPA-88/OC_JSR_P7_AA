@@ -353,53 +353,28 @@ const getInformation = (recipes, type) => {
     // Event adding
     searchInput.addEventListener("keyup", filterRecipes);
 
-    getSelectNode('ingredient').addEventListener(
-        "click",
-        filterIngredients
-    );
+    const tagTypes = [
+        {name:'ingredient', filterMethod:filterIngredients, closeMethod:closeIngredientFilter},
+        {name:'device', filterMethod:filterDevices, closeMethod:closeDeviceFilter},
+        {name:'ustensil', filterMethod:filterUstensils, closeMethod:closeUstensilFilter}
+    ];
 
-    getCloseButton('ingredient').addEventListener(
-        "click",
-        closeIngredientFilter
-    );
-
-    document.querySelector("#ingredients-search").addEventListener(
-        "keyup",
-        filterIngredients
-    );
-        
-    getSelectNode('device').addEventListener(
-        "click",
-        filterDevices,
-    );
-
-    getCloseButton('device').addEventListener(
-        "click",
-        closeDeviceFilter
-    );
-    document.querySelector("#devices-search").addEventListener(
-        "keyup",
-        filterDevices
-    );
-
-
-    getSelectNode('ustensil').addEventListener(
-        "click",
-        filterUstensils,
-    );
-
-    getCloseButton('ustensil').addEventListener(
-        "click",
-        closeUstensilFilter
-    );
-
-    document.querySelector("#ustensils-search").addEventListener(
-        "keyup",
-        filterUstensils
-    );
+    tagTypes.forEach(type => {
+        getSelectNode(type.name).addEventListener(
+            "click",
+            type.filterMethod
+        );
+        getCloseButton(type.name).addEventListener(
+            "click",
+            type.closeMethod
+        );
+        document.querySelector(`#${type.name}s-search`).addEventListener(
+            "keyup",
+            type.filterMethod
+        );
+    }); 
 
     // RENDERING 
-    // TODO : INSERT HERE THE RENDER/DISPLAY FUNCTIONS CALL
     
     displayEnabledTags(filters);
 
