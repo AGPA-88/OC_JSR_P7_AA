@@ -178,7 +178,7 @@ const getInformation = (recipes, type) => {
             filterItem = filterUstensils;
             break;
         } 
-        getSelectNode('ingredient').addEventListener(
+        getSelectNode(type).addEventListener(
             "click",
             filterItem
         );
