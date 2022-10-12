@@ -4,12 +4,12 @@ const searchInput = document.querySelector("#search");
 const ingredientsSelect = document.querySelector("#ingredients-select");
 const devicesSelect = document.querySelector("#devices-select");
 const ustensilsSelect = document.querySelector("#ustensils-select");
-const closeIngredientButton = document.querySelector('#closeIngredient')
-const closeDeviceButton = document.querySelector('#closeDevice')
-const closeUstensilButton = document.querySelector('#closeUstensil')
+const closeIngredientButton = document.querySelector('#closeIngredient');
+const closeDeviceButton = document.querySelector('#closeDevice');
+const closeUstensilButton = document.querySelector('#closeUstensil');
 const REMOVE_INGREDIENT_CLASSES = 'remove-filter remove-ingredient-filter';
-const REMOVE_DEVICE_CLASSES = 'remove-filter remove-device-filter'
-const REMOVE_USTENSIL_CLASSES = 'remove-filter remove-ustensil-filter'
+const REMOVE_DEVICE_CLASSES = 'remove-filter remove-device-filter';
+const REMOVE_USTENSIL_CLASSES = 'remove-filter remove-ustensil-filter';
 
 
 // GET RECIPES
@@ -165,7 +165,7 @@ const getUstensils = (recipes) => {
     //closing functions
 
     const closeIngredientFilter = (e)=> {
-        if (e) e.stopPropagation()
+        if (e) e.stopPropagation();
         ingredientsSelect.classList.remove("open");
         document.querySelector("#openIngredient").style.display="inline";
         document.querySelector("#closeIngredient").style.display="none";
@@ -175,9 +175,9 @@ const getUstensils = (recipes) => {
             "click",
             filterIngredients
         );
-    }
+    };
     const closeDeviceFilter = (e)=> {
-        if (e) e.stopPropagation()
+        if (e) e.stopPropagation();
         devicesSelect.classList.remove("open");
         document.querySelector("#openDevice").style.display="inline";
         document.querySelector("#closeDevice").style.display="none";
@@ -187,9 +187,9 @@ const getUstensils = (recipes) => {
             "click",
             filterDevices
         );
-    }
+    };
     const closeUstensilFilter = (e)=> {
-        if (e) e.stopPropagation()
+        if (e) e.stopPropagation();
         ustensilsSelect.classList.remove("open");
         document.querySelector("#openUstensil").style.display="inline";
         document.querySelector("#closeUstensil").style.display="none";
@@ -199,7 +199,7 @@ const getUstensils = (recipes) => {
             "click",
             filterUstensils
         );
-    }
+    };
 
     // Filtering functions
 
@@ -311,7 +311,7 @@ const getUstensils = (recipes) => {
             "click",
             filterIngredients
         );
-        console.log(ingredientsSelect)
+        console.log(ingredientsSelect);
     };
         
     
@@ -385,7 +385,7 @@ const getUstensils = (recipes) => {
     closeIngredientButton.addEventListener(
         "click",
         closeIngredientFilter
-    )
+    );
 
     
     searchInput.addEventListener("keyup", filterRecipes);
@@ -393,7 +393,7 @@ const getUstensils = (recipes) => {
     document.querySelector("#ingredients-search").addEventListener(
         "keyup",
         filterIngredients
-        );
+    );
         
     devicesSelect.addEventListener(
         "click",
@@ -403,7 +403,7 @@ const getUstensils = (recipes) => {
     closeDeviceButton.addEventListener(
         "click",
         closeDeviceFilter
-    )
+    );
     document.querySelector("#devices-search").addEventListener(
         "keyup",
         filterDevices
@@ -418,7 +418,7 @@ const getUstensils = (recipes) => {
     closeUstensilButton.addEventListener(
         "click",
         closeUstensilFilter
-    )
+    );
 
     document.querySelector("#ustensils-search").addEventListener(
         "keyup",
@@ -441,20 +441,20 @@ function addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipe
         elm.addEventListener('click', e => {
             e.preventDefault();
             const filterToClose = e.target.parentNode.getAttribute("data-value");
-            console.log(e.target.parentNode.className)
-            let filtersToCheck = []
+            console.log(e.target.parentNode.className);
+            let filtersToCheck = [];
             switch(e.target.parentNode.className){
-                case REMOVE_INGREDIENT_CLASSES:
-                    filtersToCheck = 'ingredients'
-                    break;
-                case REMOVE_DEVICE_CLASSES:
-                    filtersToCheck = 'devices'
-                    break;                    
-                case REMOVE_USTENSIL_CLASSES:
-                    filtersToCheck = 'ustensils'
-                    break;                    
-                default: 
-                    filtersToCheck = ''
+            case REMOVE_INGREDIENT_CLASSES:
+                filtersToCheck = 'ingredients';
+                break;
+            case REMOVE_DEVICE_CLASSES:
+                filtersToCheck = 'devices';
+                break;                    
+            case REMOVE_USTENSIL_CLASSES:
+                filtersToCheck = 'ustensils';
+                break;                    
+            default: 
+                filtersToCheck = '';
             }
             const newFilter = filters[filtersToCheck].filter(ing => {
                 console.log(ing);
@@ -474,8 +474,7 @@ function addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipe
 function mainSearch(recipes, input) {
     let result = [];
     for (let i = 0; i < recipes.length; i++) {
-      const recipeContent = JSON.stringify(recipes[i]).toLocaleLowerCase()
-      if (recipeContent.includes(input)) result.push(recipes[i])
+        if (JSON.stringify(recipes[i]).toLocaleLowerCase().includes(input)) result[result.length] = recipe[i];
     }
     recipes = result;
     return recipes;
