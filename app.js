@@ -474,8 +474,7 @@ function addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipe
 function mainSearch(recipes, input) {
     let result = [];
     for (let i = 0; i < recipes.length; i++) {
-        const recipeContent = JSON.stringify(recipes[i]).toLocaleLowerCase();
-        if (recipeContent.includes(input)) result.push(recipes[i]);
+        if (JSON.stringify(recipes[i]).toLocaleLowerCase().includes(input)) result[result.length] = recipes[i];
     }
     recipes = result;
     return recipes;
