@@ -223,6 +223,9 @@ const getUstensils = (recipes) => {
         if (e.keyCode === 13) {e.preventDefault();
             e.stopPropagation();
         }
+        
+        //ReInit the recipes array
+        recipes = data;
 
         //close buttons
         closeIngredientFilter();
@@ -232,9 +235,7 @@ const getUstensils = (recipes) => {
         const input = document.querySelector("#search-box").value.toLocaleLowerCase();
     
         if (input.length > 2){
-            console.log(filters);
-            let filteredRecipes = [];
-            
+            console.log(filters);            
             recipes = mainSearch(recipes, input);
       
         }else{
@@ -441,7 +442,7 @@ function addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipe
         elm.addEventListener('click', e => {
             e.preventDefault();
             const filterToClose = e.target.parentNode.getAttribute("data-value");
-            console.log(e.target.parentNode.className);
+            console.log(filterToClose);
             let filtersToCheck = [];
             switch(e.target.parentNode.className){
             case REMOVE_INGREDIENT_CLASSES:
@@ -462,6 +463,7 @@ function addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipe
             });
 
             filters[filtersToCheck] = newFilter; // filters.ingredients === filters['ingredients']
+            console.log(filters);
             displayEnabledTags(filters);
             filterRecipes(e);
 
