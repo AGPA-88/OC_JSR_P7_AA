@@ -142,23 +142,17 @@ const getUstensils = (recipes) => {
 
     // RENDER INGREDIENTS TAGS
     const displayEnabledIngredients = (filters) => {
-
-
-        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div id="filter-ingredients-tags" class="tags ingredient ingredient-tag-color">${ing} <div class="${REMOVE_INGREDIENT_CLASSES}" data-value="${ing}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
-
-        
+        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div id="filter-ingredients-tags" class="tags ingredient ingredient-tag-color">${ing} <div class="${REMOVE_INGREDIENT_CLASSES}" data-value="${ing}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);       
     };
 
     // RENDER DEVICES TAGS
     const displayEnabledDevices = (filters) => {
-
         filters.devices.map((dev) => selectedFilters.innerHTML+=`<div id="filter-devices-tags" class="tags devices devices-tag-color">${dev} <div class="${REMOVE_DEVICE_CLASSES}" data-value="${dev}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
     };
 
 
     // RENDER UTENSILS TAGS
     const displayEnabledUstensils = (filters) => {
-
         filters.ustensils.map((ust) => selectedFilters.innerHTML+=`<div id="filter-ustensils-tags" class="tags ustensil ustensils-tag-color">${ust} <div class="${REMOVE_USTENSIL_CLASSES}" data-value="${ust}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
     };
 
@@ -223,7 +217,7 @@ const getUstensils = (recipes) => {
         if (e.keyCode === 13) {e.preventDefault();
             e.stopPropagation();
         }
-        
+
         //ReInit the recipes array
         recipes = data;
 
@@ -234,8 +228,7 @@ const getUstensils = (recipes) => {
 
         const input = document.querySelector("#search-box").value.toLocaleLowerCase();
     
-        if (input.length > 2){
-            console.log(filters);            
+        if (input.length > 2){      
             recipes = mainSearch(recipes, input);
       
         }else{
@@ -244,7 +237,6 @@ const getUstensils = (recipes) => {
 
         // INGREDIENTS
         if (filters.ingredients.length > 0) {
-            console.log("Ingrdient filtering");
             let filteredRecipes = recipes;
             filters.ingredients.forEach(ingredient => {
                 filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ingredients).toLocaleLowerCase().includes(ingredient))];
@@ -254,7 +246,6 @@ const getUstensils = (recipes) => {
 
         // DEVICES
         if (filters.devices.length > 0) {
-            console.log("Devices filtering");
             let filteredRecipes = recipes;
             filters.devices.forEach(device => {
                 filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.appliance).toLocaleLowerCase().includes(device))];
@@ -264,14 +255,12 @@ const getUstensils = (recipes) => {
 
         // USTENSILS
         if (filters.ustensils.length > 0) {
-            console.log("Ustensils filtering");
             let filteredRecipes = recipes;
             filters.ustensils.forEach(ustensil => {
                 filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ustensils).toLocaleLowerCase().includes(ustensil))];
             });
             recipes = filteredRecipes;
         }
-        console.log({ recipes });
         renderRecipes(recipes);
     
         if (recipes.length === 0) recipesNode.innerHTML = 'No recipe matches your criteria... <br> You can search for "apple pie", "fish", etc...'; 
@@ -280,8 +269,7 @@ const getUstensils = (recipes) => {
         
      
     // FILTER INGREDIENTES
-    const filterIngredients = (e) => {
-        console.log({ e });
+    const filterIngredients = () => {
         closeDeviceFilter();
         closeUstensilFilter();
         
@@ -301,8 +289,7 @@ const getUstensils = (recipes) => {
         
         document.querySelectorAll('.select-ingredient')?.forEach(btn => btn.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            console.log(e.target.innerText);
+
             filters.ingredients = [...filters.ingredients, e.target.innerText];
             displayEnabledTags(filters);
             filterIngredientsAndRecipes(e);
@@ -312,13 +299,11 @@ const getUstensils = (recipes) => {
             "click",
             filterIngredients
         );
-        console.log(ingredientsSelect);
     };
         
     
     // FILTER DEVICES
-    const filterDevices = (e) => {
-        console.log({ e });
+    const filterDevices = () => {
         closeIngredientFilter();
         closeUstensilFilter();
     
@@ -338,7 +323,6 @@ const getUstensils = (recipes) => {
         document.querySelectorAll('.select-devices')?.forEach(btn => btn.addEventListener('click', (e) => {
             e.preventDefault();
     
-            console.log(e.target.innerText);
             filters.devices = [...filters.devices, e.target.innerText];
             displayEnabledTags(filters);
             filterDevicesAndRecipes(e);
@@ -347,8 +331,7 @@ const getUstensils = (recipes) => {
     
     
     // FILTER UTENSILS
-    const filterUstensils = (e) => {
-        console.log({ e });
+    const filterUstensils = () => {
         closeIngredientFilter();
         closeDeviceFilter();
     
@@ -368,7 +351,6 @@ const getUstensils = (recipes) => {
         document.querySelectorAll('.select-ustensils')?.forEach(btn => btn.addEventListener('click', (e) => {
             e.preventDefault();
     
-            console.log(e.target.innerText);
             filters.ustensils = [...filters.ustensils, e.target.innerText];
             displayEnabledTags(filters);
             filterUstensilsAndRecipes(e);
@@ -438,11 +420,9 @@ const getUstensils = (recipes) => {
 // REMOVE TAGS FUNCTION
 function addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipes) {
     document.querySelectorAll('.remove-filter')?.forEach(elm => {
-        console.log(elm);
         elm.addEventListener('click', e => {
             e.preventDefault();
             const filterToClose = e.target.parentNode.getAttribute("data-value");
-            console.log(filterToClose);
             let filtersToCheck = [];
             switch(e.target.parentNode.className){
             case REMOVE_INGREDIENT_CLASSES:
@@ -458,16 +438,12 @@ function addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipe
                 filtersToCheck = '';
             }
             const newFilter = filters[filtersToCheck].filter(ing => {
-                console.log(ing);
                 return ing !== filterToClose;
             });
 
             filters[filtersToCheck] = newFilter; // filters.ingredients === filters['ingredients']
-            console.log(filters);
             displayEnabledTags(filters);
             filterRecipes(e);
-
-            console.dir(e.target);
         });
     });
 }
