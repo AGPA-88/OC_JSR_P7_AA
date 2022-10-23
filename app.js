@@ -1,18 +1,22 @@
-/* Selecting the HTML elements with the id of recipes and search. */
+/* Selecting the HTML elements that we will be using in our JavaScript. */
 const recipesNode = document.querySelector("#recipes");
 const searchInput = document.querySelector("#search");
 const ingredientsSelect = document.querySelector("#ingredients-select");
 const devicesSelect = document.querySelector("#devices-select");
 const ustensilsSelect = document.querySelector("#ustensils-select");
-const closeIngredientButton = document.querySelector('#closeIngredient')
-const closeDeviceButton = document.querySelector('#closeDevice')
-const closeUstensilButton = document.querySelector('#closeUstensil')
+const closeIngredientButton = document.querySelector('#closeIngredient');
+const closeDeviceButton = document.querySelector('#closeDevice');
+const closeUstensilButton = document.querySelector('#closeUstensil');
 const REMOVE_INGREDIENT_CLASSES = 'remove-filter remove-ingredient-filter';
-const REMOVE_DEVICE_CLASSES = 'remove-filter remove-device-filter'
-const REMOVE_USTENSIL_CLASSES = 'remove-filter remove-ustensil-filter'
+const REMOVE_DEVICE_CLASSES = 'remove-filter remove-device-filter';
+const REMOVE_USTENSIL_CLASSES = 'remove-filter remove-ustensil-filter';
 
 
 // GET RECIPES
+/**
+ * It fetches the data.json file and returns the data in JSON format
+ * @returns An array of objects.
+ */
 const getRecipes = async () => {
     let res = await fetch("/data.json");
     return await res.json();
@@ -20,6 +24,13 @@ const getRecipes = async () => {
 
 
 // GET INGREDIENTS
+/**
+ * It takes an array of recipes, loops through each recipe, loops through each ingredient in each
+ * recipe, and pushes the ingredient to an array if it doesn't already exist in the array and if it
+ * matches the search query.
+ * @param recipes - an array of objects, each object is a recipe
+ * @returns An array of ingredients.
+ */
 const getIngredients = (recipes) => {
     let ingredients = [];
     recipes.forEach((recipe) => {
@@ -38,6 +49,11 @@ const getIngredients = (recipes) => {
 
 
 // GET DEVICES
+/**
+ * It takes an array of objects, and returns an array of strings.
+ * @param recipes - an array of objects
+ * @returns An array of devices.
+ */
 const getDevices = (recipes) => {
     let devices = [];
     recipes.forEach((recipes) => {
@@ -52,6 +68,11 @@ const getDevices = (recipes) => {
 };
 
 // GET UTENSILS
+/**
+ * It takes an array of recipes and returns an array of ustensils.
+ * @param recipes - an array of objects, each object is a recipe
+ * @returns An array of ustensils.
+ */
 const getUstensils = (recipes) => {
     let ustensils = [];
     recipes.forEach((recipe) => {
@@ -71,6 +92,7 @@ const getUstensils = (recipes) => {
 (async () => {
 
     //Initialization
+    /*  Creating a variable called data and assigning it the value of the getRecipes function. */
     const data = await getRecipes();
     let recipes = data;
     let filters = {
@@ -80,6 +102,7 @@ const getUstensils = (recipes) => {
     };
 
     //HTML Elements
+    /* The above code is selecting the element with the id of selected-filters. */
     const selectedFilters = document.querySelector('#selected-filters');
 
     // Rendering functions
@@ -87,6 +110,7 @@ const getUstensils = (recipes) => {
     const renderRecipes = (data) => {
         recipesNode.innerHTML = "";
 
+        /* Creating a string of HTML that will be used to display the ingredients for each recipe. */
         data.map((recipe) => {
             let ingredientsHtml = "";
             recipe.ingredients.forEach((ingredient) => {
@@ -95,6 +119,8 @@ const getUstensils = (recipes) => {
                 }</p>`;
             });
 
+            /* Checking if the description is longer than 200 characters. If it is, it will cut it off at 200
+            characters and add (...) to the end. If it is not, it will just display the description. */
             let description = "";
             const sizeLimit = 200;
             if (recipe.description.length > sizeLimit) {
@@ -131,12 +157,80 @@ const getUstensils = (recipes) => {
         });
     };
 
+    /**
+ * It displays the enabled tags (ingredients, devices, ustensils) in the selectedFilters div */
     const displayEnabledTags = (filters) => {
         selectedFilters.innerHTML="";
         displayEnabledIngredients(filters);
         displayEnabledDevices(filters);
         displayEnabledUstensils(filters);
         addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipes);
+
+    };
+
+    /**
+     * The function takes in an object called filters, and then maps over the ingredients array in the
+     * filters object, and then adds a div to the selectedFilters div with the ingredient name and a remove
+     * button. */
+    // RENDER INGREDIENTS TAGS
+    const displayEnabledIngredients = (filters) => {
+        filters.ingredients.map((ing) => selectedFilters.innerHTML+=`<div id="filter-ingredients-tags" class="tags ingredient ingredient-tag-color">${ing} <div class="${REMOVE_INGREDIENT_CLASSES}" data-value="${ing}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);       
+    };
+
+    // RENDER DEVICES TAGS
+    const displayEnabledDevices = (filters) => {
+        filters.devices.map((dev) => selectedFilters.innerHTML+=`<div id="filter-devices-tags" class="tags devices devices-tag-color">${dev} <div class="${REMOVE_DEVICE_CLASSES}" data-value="${dev}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
+    };
+
+
+    // RENDER UTENSILS TAGS
+    const displayEnabledUstensils = (filters) => {
+        filters.ustensils.map((ust) => selectedFilters.innerHTML+=`<div id="filter-ustensils-tags" class="tags ustensil ustensils-tag-color">${ust} <div class="${REMOVE_USTENSIL_CLASSES}" data-value="${ust}"> <i class="fa fa-times-circle-o" aria-hidden="true"></i> </div></div>`);
+    };
+
+    
+    //closing functions
+    /**
+ * It removes the class "open" from the ingredientsSelect element, and then it adds an event listener
+ * to the ingredientsSelect element that calls the filterIngredients function.
+ * @param e - the event object
+ */
+    const closeIngredientFilter = (e)=> {
+        if (e) e.stopPropagation();
+        ingredientsSelect.classList.remove("open");
+        document.querySelector("#openIngredient").style.display="inline";
+        document.querySelector("#closeIngredient").style.display="none";
+        document.querySelector("#labelIngredient").style.display="inline";
+        document.querySelector("#ingredients-search").style.display="none";
+        ingredientsSelect.addEventListener(
+            "click",
+            filterIngredients
+        );
+    };
+    const closeDeviceFilter = (e)=> {
+        if (e) e.stopPropagation();
+        devicesSelect.classList.remove("open");
+        document.querySelector("#openDevice").style.display="inline";
+        document.querySelector("#closeDevice").style.display="none";
+        document.querySelector("#labelDevice").style.display="inline";
+        document.querySelector("#devices-search").style.display="none";
+        devicesSelect.addEventListener(
+            "click",
+            filterDevices
+        );
+    };
+    const closeUstensilFilter = (e)=> {
+        if (e) e.stopPropagation();
+        ustensilsSelect.classList.remove("open");
+        document.querySelector("#openUstensil").style.display="inline";
+        document.querySelector("#closeUstensil").style.display="none";
+        document.querySelector("#labelUstensil").style.display="inline";
+        document.querySelector("#ustensils-search").style.display="none";
+        ustensilsSelect.addEventListener(
+            "click",
+            filterUstensils
+        );
+    };
 
     };
 
@@ -202,7 +296,8 @@ const getUstensils = (recipes) => {
     }
 
     // Filtering functions
-
+    /**
+ * When the user types in the search box, filter the ingredients and recipes. */
     const filterIngredientsAndRecipes = (e) => {
         filterIngredients(e);
         filterRecipes(e);
@@ -219,22 +314,27 @@ const getUstensils = (recipes) => {
     };
 
     // FILTER RECIPES
+    /**
+ * If the key pressed is the enter key, then prevent the default action and stop the event from
+ * propagating. */
     const filterRecipes = (e) => {
         if (e.keyCode === 13) {e.preventDefault();
             e.stopPropagation();
         }
+
+        //ReInit the recipes array
+        recipes = data;
 
         //close buttons
         closeIngredientFilter();
         closeDeviceFilter();
         closeUstensilFilter();
 
+        /* Selecting the input box and getting the value of the input box. */
         const input = document.querySelector("#search-box").value.toLocaleLowerCase();
     
-        if (input.length > 2){
-            console.log(filters);
-            let filteredRecipes = [];
-            
+        /* Searching for the input in the recipes array. */
+        if (input.length > 2){      
             recipes = mainSearch(recipes, input);
       
         }else{
@@ -251,9 +351,18 @@ const getUstensils = (recipes) => {
             recipes = filteredRecipes;
         }
 
+        /* Filtering the recipes based on the filters selected by the user. */
+        // INGREDIENTS
+        if (filters.ingredients.length > 0) {
+            let filteredRecipes = recipes;
+            filters.ingredients.forEach(ingredient => {
+                filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ingredients).toLocaleLowerCase().includes(ingredient))];
+            });
+            recipes = filteredRecipes;
+        }
+
         // DEVICES
         if (filters.devices.length > 0) {
-            console.log("Devices filtering");
             let filteredRecipes = recipes;
             filters.devices.forEach(device => {
                 filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.appliance).toLocaleLowerCase().includes(device))];
@@ -263,14 +372,12 @@ const getUstensils = (recipes) => {
 
         // USTENSILS
         if (filters.ustensils.length > 0) {
-            console.log("Ustensils filtering");
             let filteredRecipes = recipes;
             filters.ustensils.forEach(ustensil => {
                 filteredRecipes = [...filteredRecipes.filter(recipe => JSON.stringify(recipe.ustensils).toLocaleLowerCase().includes(ustensil))];
             });
             recipes = filteredRecipes;
         }
-        console.log({ recipes });
         renderRecipes(recipes);
     
         if (recipes.length === 0) recipesNode.innerHTML = 'No recipe matches your criteria... <br> You can search for "apple pie", "fish", etc...'; 
@@ -279,8 +386,7 @@ const getUstensils = (recipes) => {
         
      
     // FILTER INGREDIENTES
-    const filterIngredients = (e) => {
-        console.log({ e });
+    const filterIngredients = () => {
         closeDeviceFilter();
         closeUstensilFilter();
         
@@ -288,6 +394,7 @@ const getUstensils = (recipes) => {
         document.querySelector("#ingredients-list").innerHTML = "";
         ingredientsSelect.classList.add("open");
         
+        /* Creating a list of ingredients that are not in the filters.ingredients array. */
         ingredients.map((ingredient) => {    
             if (!filters.ingredients.includes(ingredient)) document.querySelector("#ingredients-list").innerHTML += `<li><button class="select-ingredient">${ingredient}</button></li>`;
         });
@@ -298,11 +405,14 @@ const getUstensils = (recipes) => {
         document.querySelector("#ingredients-search").style.display="inline";
 
         
+        /* Adding an event listener to each button with the class 'select-ingredient'. When the button is
+        clicked, the event listener will prevent the default action of the button, add the text of the
+        button to the filters.ingredients array, display the enabled tags, and filter the ingredients and
+        recipes. */
         document.querySelectorAll('.select-ingredient')?.forEach(btn => btn.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            console.log(e.target.innerText);
-            filters.ingredients = [...filters.ingredients, e.target.innerText];
+
+            filters.ingredients.push(e.target.innerText);
             displayEnabledTags(filters);
             filterIngredientsAndRecipes(e);
             
@@ -311,13 +421,11 @@ const getUstensils = (recipes) => {
             "click",
             filterIngredients
         );
-        console.log(ingredientsSelect)
     };
         
     
     // FILTER DEVICES
-    const filterDevices = (e) => {
-        console.log({ e });
+    const filterDevices = () => {
         closeIngredientFilter();
         closeUstensilFilter();
     
@@ -337,8 +445,7 @@ const getUstensils = (recipes) => {
         document.querySelectorAll('.select-devices')?.forEach(btn => btn.addEventListener('click', (e) => {
             e.preventDefault();
     
-            console.log(e.target.innerText);
-            filters.devices = [...filters.devices, e.target.innerText];
+            filters.devices.push(e.target.innerText);
             displayEnabledTags(filters);
             filterDevicesAndRecipes(e);
         }));
@@ -346,8 +453,7 @@ const getUstensils = (recipes) => {
     
     
     // FILTER UTENSILS
-    const filterUstensils = (e) => {
-        console.log({ e });
+    const filterUstensils = () => {
         closeIngredientFilter();
         closeDeviceFilter();
     
@@ -367,8 +473,7 @@ const getUstensils = (recipes) => {
         document.querySelectorAll('.select-ustensils')?.forEach(btn => btn.addEventListener('click', (e) => {
             e.preventDefault();
     
-            console.log(e.target.innerText);
-            filters.ustensils = [...filters.ustensils, e.target.innerText];
+            filters.ustensils.push(e.target.innerText);
             displayEnabledTags(filters);
             filterUstensilsAndRecipes(e);
         
@@ -385,7 +490,7 @@ const getUstensils = (recipes) => {
     closeIngredientButton.addEventListener(
         "click",
         closeIngredientFilter
-    )
+    );
 
     
     searchInput.addEventListener("keyup", filterRecipes);
@@ -393,7 +498,7 @@ const getUstensils = (recipes) => {
     document.querySelector("#ingredients-search").addEventListener(
         "keyup",
         filterIngredients
-        );
+    );
         
     devicesSelect.addEventListener(
         "click",
@@ -403,7 +508,7 @@ const getUstensils = (recipes) => {
     closeDeviceButton.addEventListener(
         "click",
         closeDeviceFilter
-    )
+    );
     document.querySelector("#devices-search").addEventListener(
         "keyup",
         filterDevices
@@ -418,6 +523,11 @@ const getUstensils = (recipes) => {
     closeUstensilButton.addEventListener(
         "click",
         closeUstensilFilter
+    );
+
+    closeUstensilButton.addEventListener(
+        "click",
+        closeUstensilFilter
     )
 
     document.querySelector("#ustensils-search").addEventListener(
@@ -425,8 +535,7 @@ const getUstensils = (recipes) => {
         filterUstensils
     );
 
-    // RENDERING 
-    // TODO : INSERT HERE THE RENDER/DISPLAY FUNCTIONS CALL
+    // RENDERING
     
     displayEnabledTags(filters);
 
@@ -434,11 +543,50 @@ const getUstensils = (recipes) => {
 
 })();
 
-function mainSearch(recipes, input) {
-    recipes = recipes.filter((recipe) => {
-        const recipeContent = JSON.stringify(recipe).toLocaleLowerCase();
-        return recipeContent.includes(input);
+// REMOVE TAGS FUNCTION
+function addRemoveActionOnCloseButtons(filters, displayEnabledTags, filterRecipes) {
+    document.querySelectorAll('.remove-filter')?.forEach(elm => {
+        elm.addEventListener('click', e => {
+            e.preventDefault();
+            const filterToClose = e.target.parentNode.getAttribute("data-value");
+            let filtersToCheck = [];
+            switch(e.target.parentNode.className){
+            case REMOVE_INGREDIENT_CLASSES:
+                filtersToCheck = 'ingredients';
+                break;
+            case REMOVE_DEVICE_CLASSES:
+                filtersToCheck = 'devices';
+                break;                    
+            case REMOVE_USTENSIL_CLASSES:
+                filtersToCheck = 'ustensils';
+                break;                    
+            default: 
+                filtersToCheck = '';
+            }
+            const newFilter = filters[filtersToCheck].filter(ing => {
+                return ing !== filterToClose;
+            });
+
+            filters[filtersToCheck] = newFilter; // filters.ingredients === filters['ingredients']
+            displayEnabledTags(filters);
+            filterRecipes(e);
+        });
     });
+}
+
+
+/**
+ * It takes an array of objects and a string, and returns an array of objects that contain the string
+ * @param recipes - an array of objects
+ * @param input - The search input
+ * @returns An array of objects.
+ */
+function mainSearch(recipes, input) {
+    let result = [];
+    for (let i = 0; i < recipes.length; i++) {
+        if (JSON.stringify(recipes[i]).toLocaleLowerCase().includes(input)) result[result.length] = recipes[i];
+    }
+    recipes = result;
     return recipes;
 }
 
